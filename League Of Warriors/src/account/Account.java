@@ -1,11 +1,9 @@
-package Account;
+package account;
 
-import Characters.Character;
-import Account.Credentials;
+import characters.Character;
 
 import java.util.ArrayList;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class Account {
     private Information accountInfo;
@@ -16,6 +14,30 @@ public class Account {
         this.accountInfo = accountInfo;
         this.ownedCharacters = ownedCharacters;
         this.gamesPlayed = gamesPlayed;
+    }
+
+    public String getEmail() {
+        return accountInfo.loginCredentials.getEmail();
+    }
+
+    public String getPassword() {
+        return accountInfo.loginCredentials.getPassword();
+    }
+
+    public String getName() {
+        return accountInfo.name;
+    }
+
+    public String getCountry() {
+        return accountInfo.country;
+    }
+
+    public SortedSet<String> getFavouriteGames() {
+        return accountInfo.favouriteGames;
+    }
+
+    public ArrayList<Character> getOwnedCharacters() {
+        return ownedCharacters;
     }
 
     public static class Information {

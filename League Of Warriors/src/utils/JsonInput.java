@@ -1,14 +1,15 @@
-import Account.Account;
-import Account.Credentials;
-import Characters.Mage;
-import Characters.Rogue;
-import Characters.Warrior;
-import Characters.Character;
+package utils;
+
+import account.Account;
+import account.Credentials;
+import characters.Mage;
+import characters.Rogue;
+import characters.Warrior;
+import characters.Character;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +28,7 @@ public class JsonInput {
             JSONArray accountsArray = (JSONArray) obj.get("accounts");
 
             ArrayList<Account> accounts = new ArrayList<>();
-            for (int i=0; i < accountsArray.size(); i++) {
+            for (int i = 0; i < accountsArray.size(); i++) {
                 JSONObject accountJson = (JSONObject) accountsArray.get(i);
                 // name, country, games_number
                 String name = (String) accountJson.get("name");
@@ -66,8 +67,8 @@ public class JsonInput {
                         String cname = (String) charJson.get("name");
                         String profession = (String) charJson.get("profession");
                         String level = (String) charJson.get("level");
-                        int lvl = Integer.parseInt(level);
-                        Integer experience = (Integer) charJson.get("experience");
+                        Integer lvl = Integer.parseInt(level);
+                        int experience = ((Number) charJson.get("experience")).intValue();
 
                         Character newCharacter = null;
                         if (profession.equals("Warrior"))
@@ -89,7 +90,7 @@ public class JsonInput {
             return accounts;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return null;

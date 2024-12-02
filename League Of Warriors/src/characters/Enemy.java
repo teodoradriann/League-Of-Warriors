@@ -1,6 +1,6 @@
-package Characters;
+package characters;
 
-import Interfaces.Battle;
+import interfaces.Battle;
 
 public class Enemy implements Battle {
 

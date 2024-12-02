@@ -1,6 +1,6 @@
-package Game;
+package game;
 
-enum CellEntityType {
+public enum CellEntityType {
     PLAYER,
     VOID,
     ENEMY,

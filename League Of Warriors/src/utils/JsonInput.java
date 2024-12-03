@@ -20,7 +20,7 @@ import java.util.TreeSet;
 
 public class JsonInput {
     public static ArrayList<Account> deserializeAccounts() {
-        String accountPath = "/Users/adrian/Documents/facultate/an2/poo/League Of Warriors - Tema 1/League Of Warriors/src/accounts.json";
+        String accountPath = "/Users/adrian/Documents/facultate/an2/poo/League Of Warriors/League Of Warriors/src/accounts.json";
         try {
             String content = new String((Files.readAllBytes(Paths.get(accountPath))));
             JSONParser parser = new JSONParser();

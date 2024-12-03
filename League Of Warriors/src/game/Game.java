@@ -4,6 +4,7 @@ import account.Account;
 import characters.Character;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import utils.JsonInput;
@@ -13,12 +14,9 @@ public class Game {
     private Grid map;
     private Account loggedAccount;
     private Character selectedCharacter;
+    private String keyPressed;
 
-    public void event() {
-
-    }
-
-    public void run() throws InterruptedException {
+    public void init() throws InterruptedException {
         existingAccounts = JsonInput.deserializeAccounts();
         Scanner scanner = new Scanner(System.in);
         boolean accountFound = false;
@@ -41,11 +39,22 @@ public class Game {
         }
 
         // flush the screen
-        for (int i = 0; i < 100; i++) {
-            System.out.println();
-        }
+        flushScreen();
 
         // TimeUnit.SECONDS.sleep(1);
+        selectCharacterAndStartGame();
+    }
+
+    public void run() {
+        while (true) {
+            if (selectedCharacter.getHp() < 0 || keyPressed.equals("q")) {
+                selectCharacterAndStartGame();
+            }
+        }
+    }
+
+    private void selectCharacterAndStartGame() {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Hello " + this.loggedAccount.getName() + "!");
         System.out.println("Please choose your hero :)");
         int i = 1;
@@ -71,6 +80,20 @@ public class Game {
             } else {
                 System.out.println("Please choose a valid character!");
             }
+        }
+        flushScreen();
+        Random rand = new Random();
+        int length = rand.nextInt(3, 11);
+        int height = rand.nextInt(3, 11);
+        map = Grid.generateMap(length, height, selectedCharacter);
+        map.printMap();
+
+        this.run();
+    }
+
+    private static void flushScreen() {
+        for (int i = 0; i < 100; i++) {
+            System.out.println();
         }
     }
 }

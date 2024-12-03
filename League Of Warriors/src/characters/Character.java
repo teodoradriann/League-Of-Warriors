@@ -6,6 +6,7 @@ public abstract class Character implements Battle {
     protected String name;
     protected Integer xp;
     protected Integer level;
+    protected Float hp;
 
     protected Integer strength;
     protected Integer charisma;
@@ -67,6 +68,9 @@ public abstract class Character implements Battle {
         this.dexterity = dexterity;
     }
 
+    public Float getHp() { return hp; }
+
+    public void setHp(Float hp) { this.hp = hp; }
     @Override
     public void receiveDamage(int damage) {
 

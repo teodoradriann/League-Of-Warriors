@@ -40,6 +40,14 @@ public class Account {
         return ownedCharacters;
     }
 
+    public Integer getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void setGamesPlayed(Integer gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
     public static class Information {
         private Credentials loginCredentials;
         private String name;

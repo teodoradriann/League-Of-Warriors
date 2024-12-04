@@ -28,7 +28,7 @@ public class Game {
 
     public void run() throws InterruptedException {
         while (true) {
-            if (selectedCharacter.getHp() != null && selectedCharacter.getHp() < 0.0) {
+            if (selectedCharacter.getCurrentHP() < 0.0) {
                 System.out.println("GAME OVER! YOU DIED.");
                 TimeUnit.SECONDS.sleep(3);
                 flushScreen();
@@ -118,7 +118,7 @@ public class Game {
         Random rand = new Random();
         int length = rand.nextInt(3, 11);
         int height = rand.nextInt(3, 11);
-        map = Grid.generateMap(length, height, selectedCharacter);
+        map = Grid.generateMap(length, height, selectedCharacter, loggedAccount);
         map.printMap();
 
         this.run();

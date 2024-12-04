@@ -1,8 +1,10 @@
 package game;
 
 import characters.Character;
+import exceptions.ImpossibleMove;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 public class Grid extends ArrayList<ArrayList<Cell>> {
@@ -27,24 +29,24 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         int portalNumber = 1;
         Random rand = new Random();
         Grid map = new Grid(length, height, hero);
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < height; i++) {
             ArrayList<Cell> row = new ArrayList<>();
-            for (int j = 0; j < height; j++) {
+            for (int j = 0; j < length; j++) {
                 row.add(new Cell(i, j, CellEntityType.VOID, false));
             }
             map.add(row);
         }
 
-        int heroCellOx = rand.nextInt(0, length);
-        int heroCellOy = rand.nextInt(0, height);
+        int heroCellOx = rand.nextInt(0, height);
+        int heroCellOy = rand.nextInt(0, length);
         map.heroCell = map.get(heroCellOx).get(heroCellOy);
         map.hero = hero;
         map.heroCell.setVisited(true);
         map.heroCell.setCellType(CellEntityType.PLAYER);
 
         ArrayList<Cell> emptyCells = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < length; j++) {
                 Cell cell = map.get(i).get(j);
                 if (cell.getCellType().equals(CellEntityType.VOID)) {
                     emptyCells.add(cell);
@@ -70,35 +72,35 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     }
 
     public void printMap() {
-        for (int i = 0; i < this.length; i++) {
-            for (int j = 0; j < this.height; j++) {
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.length; j++) {
                 Cell cell = this.get(i).get(j);
                 switch (cell.getCellType()) {
-                    case PLAYER -> System.out.print("H ");
+                    case PLAYER -> System.out.print(CellEntityLetter.H + " ");
                     case VOID -> {
-                        if (cell.isVisited()) {
-                            System.out.print("V ");
+                        if (cell.isVisited() || cell.isVisiting()) {
+                            System.out.print(CellEntityLetter.V + " ");
                         } else {
                             System.out.print("* ");
                         }
                     }
                     case ENEMY -> {
-                        if (cell.isVisited()) {
-                            System.out.print("E ");
+                        if (cell.isVisited() || cell.isVisiting()) {
+                            System.out.print(CellEntityLetter.E + " ");
                         } else {
                             System.out.print("* ");
                         }
                     }
                     case SANCTUARY -> {
-                        if (cell.isVisited()) {
-                            System.out.print("S ");
+                        if (cell.isVisited() || cell.isVisiting()) {
+                            System.out.print(CellEntityLetter.S + " ");
                         } else {
                             System.out.print("* ");
                         }
                     }
                     case PORTAL -> {
-                        if (cell.isVisited()) {
-                            System.out.print("P ");
+                        if (cell.isVisited() || cell.isVisiting()) {
+                            System.out.print(CellEntityLetter.P + " ");
                         } else {
                             System.out.print("* ");
                         }
@@ -110,19 +112,85 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         }
     }
 
-    void goNorth() {
+    public void moveHero(String where) {
+        Cell cellToVisit = null;
+        switch (where.toLowerCase()) {
+            case "north" -> {
+                try {
+                    int newOx = heroCell.getOx() - 1;
+                    if (newOx < 0) {
+                        throw new ImpossibleMove("You can't go north!");
+                    }
+                    cellToVisit = this.get(newOx).get(heroCell.getOy());
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "south" -> {
+                try {
+                    int newOx = heroCell.getOx() + 1;
+                    if (newOx >= height) {
+                        throw new ImpossibleMove("You can't go south!");
+                    }
+                    cellToVisit = this.get(newOx).get(heroCell.getOy());
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "west" -> {
+                try {
+                    int newOy = heroCell.getOy() - 1;
+                    if (newOy < 0) {
+                        throw new ImpossibleMove("You can't go west!");
+                    }
+                    cellToVisit = this.get(heroCell.getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "east" -> {
+                try {
+                    int newOy = heroCell.getOy() + 1;
+                    if (newOy >= length) {
+                        throw new ImpossibleMove("You can't go east!");
+                    }
+                    cellToVisit = this.get(heroCell.getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        Game.flushScreen();
+        this.printMap();
+        if (cellToVisit != null) {
+            switch (cellToVisit.getCellType()) {
+                case VOID -> {
+                    cellToVisit.setCellType(CellEntityType.PLAYER);
+                    heroCell.setCellType(CellEntityType.VOID);
+                    heroCell = cellToVisit;
+                    cellToVisit.setVisiting(false);
+                    cellToVisit.setVisited(true);
+                    Game.flushScreen();
+                    System.out.println("You went " + where + "! " + "The cell you're trying to visit is: " + CellEntityType.VOID);
+                    this.printMap();
+                }
+                case SANCTUARY -> {
 
-    }
+                }
+                case PORTAL -> {
 
-    void goSouth() {
+                }
+                case ENEMY -> {
 
-    }
-
-    void goWest() {
-
-    }
-
-    void goEast() {
-
+                }
+            }
+        }
+        else {
+            System.out.println("The target cell is null. Invalid move!");
+        }
     }
 }

@@ -5,6 +5,7 @@ public class Cell {
     private int Oy;
     private CellEntityType cellType;
     private boolean visited;
+    private boolean isVisiting;
 
     public int getOx() {
         return Ox;
@@ -37,6 +38,10 @@ public class Cell {
     public void setVisited(boolean visited) {
         this.visited = visited;
     }
+
+    public boolean isVisiting() { return isVisiting; }
+
+    public void setVisiting(boolean isVisiting) { this.isVisiting = isVisiting; }
 
     public Cell(int ox, int oy, CellEntityType cellType, boolean visited) {
         this.Ox = ox;

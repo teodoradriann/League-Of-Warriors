@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import exceptions.ImpossibleMove;
 import exceptions.InvalidCommandException;
 import utils.JsonInput;
 
@@ -15,7 +16,7 @@ public class Game {
     private ArrayList<Account> existingAccounts;
     private Grid map;
     private Account loggedAccount;
-    private Character selectedCharacter;
+    private Character hero;
     Scanner scanner = new Scanner(System.in);
 
     public void init() throws InterruptedException {
@@ -28,7 +29,7 @@ public class Game {
 
     public void run() throws InterruptedException {
         while (true) {
-            if (selectedCharacter.getCurrentHP() < 0.0) {
+            if (hero.getCurrentHP() < 0.0) {
                 System.out.println("GAME OVER! YOU DIED.");
                 TimeUnit.SECONDS.sleep(3);
                 flushScreen();
@@ -37,16 +38,16 @@ public class Game {
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
-                    map.moveHero("north");
+                    this.moveHero("north");
                     break;
                 case "s":
-                    map.moveHero("south");
+                    this.moveHero("south");
                     break;
                 case "a":
-                    map.moveHero("west");
+                    this.moveHero("west");
                     break;
                 case "d":
-                    map.moveHero("east");
+                    this.moveHero("east");
                     break;
                 case "q":
                     flushScreen();
@@ -108,7 +109,7 @@ public class Game {
             }
 
             if (choice > 0 && choice <= this.loggedAccount.getOwnedCharacters().size()) {
-                this.selectedCharacter = this.loggedAccount.getOwnedCharacters().get(choice - 1);
+                this.hero = this.loggedAccount.getOwnedCharacters().get(choice - 1);
                 break;
             } else {
                 System.out.println("Please choose a valid character!");
@@ -118,10 +119,122 @@ public class Game {
         Random rand = new Random();
         int length = rand.nextInt(3, 11);
         int height = rand.nextInt(3, 11);
-        map = Grid.generateMap(length, height, selectedCharacter, loggedAccount);
+        map = Grid.generateMap(length, height, hero);
         map.printMap();
 
         this.run();
+    }
+
+    public void moveHero(String where) {
+        Cell cellToVisit = null;
+        switch (where.toLowerCase()) {
+            case "north" -> {
+                try {
+                    int newOx = map.getHeroCell().getOx() - 1;
+                    if (newOx < 0) {
+                        throw new ImpossibleMove("You can't go north!");
+                    }
+                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "south" -> {
+                try {
+                    int newOx = map.getHeroCell().getOx() + 1;
+                    if (newOx >= map.getHeight()) {
+                        throw new ImpossibleMove("You can't go south!");
+                    }
+                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "west" -> {
+                try {
+                    int newOy = map.getHeroCell().getOy() - 1;
+                    if (newOy < 0) {
+                        throw new ImpossibleMove("You can't go west!");
+                    }
+                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            case "east" -> {
+                try {
+                    int newOy = map.getHeroCell().getOy() + 1;
+                    if (newOy >= map.getLength()) {
+                        throw new ImpossibleMove("You can't go east!");
+                    }
+                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                } catch (ImpossibleMove e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        Game.flushScreen();
+        map.printMap();
+        if (cellToVisit != null) {
+            switch (cellToVisit.getCellType()) {
+                case VOID -> {
+                    visitCell(CellEntityType.VOID, cellToVisit, where);
+                }
+                case SANCTUARY -> {
+                    Random random = new Random();
+                    float hpToAdd = random.nextFloat(1.0F, 99.0F);
+                    hero.setCurrentHP(hero.getCurrentHP() + hpToAdd);
+                    if (hero.getCurrentHP() > 100.0F) {
+                        hero.setCurrentHP(100.0F);
+                    }
+                    float manaToAdd = random.nextFloat(1.0F, 49.0F);
+                    hero.setCurrentMana(hero.getCurrentMana() + manaToAdd);
+                    if (hero.getCurrentMana() > 50.0F) {
+                        hero.setCurrentMana(50.0F);
+                    }
+                    visitCell(CellEntityType.SANCTUARY, cellToVisit, where);
+                }
+                case PORTAL -> {
+                    int xpEarned = loggedAccount.getGamesPlayed();
+                    int gamesPlayed = loggedAccount.getGamesPlayed();
+                    gamesPlayed++;
+                    loggedAccount.setGamesPlayed(gamesPlayed);
+                    int heroLevel = hero.getLevel();
+                    heroLevel++;
+                    hero.setLevel(heroLevel);
+                    xpEarned *= 5;
+                    hero.setXp(hero.getXp() + xpEarned);
+                    while (hero.getXp() > 99) {
+                        hero.setLevel(hero.getLevel() + 1);
+                        hero.setXp(hero.getXp() - 100);
+                    }
+                    visitCell(CellEntityType.PORTAL, cellToVisit, where);
+                }
+                case ENEMY -> {
+
+                }
+            }
+        }
+        else {
+            System.out.println("The target cell is null. Invalid move!");
+        }
+    }
+
+    private void visitCell(CellEntityType type, Cell cell, String where) {
+        cell.setCellType(CellEntityType.PLAYER);
+        map.getHeroCell().setCellType(CellEntityType.VOID);
+        map.setHeroCell(cell);
+        cell.setVisiting(false);
+        cell.setVisited(true);
+        Game.flushScreen();
+        System.out.println("You went " + where + "! " + "The cell you're trying to visit is: " + type);
+        System.out.println("Current HP: " + hero.getCurrentHP());
+        System.out.println("Current mana: " + hero.getCurrentMana());
+        map.printMap();
     }
 
     static void flushScreen() {

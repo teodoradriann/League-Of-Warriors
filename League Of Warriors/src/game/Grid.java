@@ -21,7 +21,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         this.hero = hero;
     }
 
-    static public Grid generateMap(int length, int height, Character hero, Account loggedAccount) {
+    static public Grid generateMap(int length, int height, Character hero) {
         int dimensions = length * height;
         if (dimensions < 8) {
             throw new IllegalArgumentException("Grid dimensions are too small. The grid must have at least 8 cells.");
@@ -45,7 +45,6 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         map.hero = hero;
         map.heroCell.setVisited(true);
         map.heroCell.setCellType(CellEntityType.PLAYER);
-        map.loggedAccount = loggedAccount;
 
         ArrayList<Cell> emptyCells = new ArrayList<>();
         for (int i = 0; i < height; i++) {
@@ -115,115 +114,19 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         }
     }
 
-    public void moveHero(String where) {
-        Cell cellToVisit = null;
-        switch (where.toLowerCase()) {
-            case "north" -> {
-                try {
-                    int newOx = heroCell.getOx() - 1;
-                    if (newOx < 0) {
-                        throw new ImpossibleMove("You can't go north!");
-                    }
-                    cellToVisit = this.get(newOx).get(heroCell.getOy());
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            case "south" -> {
-                try {
-                    int newOx = heroCell.getOx() + 1;
-                    if (newOx >= height) {
-                        throw new ImpossibleMove("You can't go south!");
-                    }
-                    cellToVisit = this.get(newOx).get(heroCell.getOy());
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            case "west" -> {
-                try {
-                    int newOy = heroCell.getOy() - 1;
-                    if (newOy < 0) {
-                        throw new ImpossibleMove("You can't go west!");
-                    }
-                    cellToVisit = this.get(heroCell.getOx()).get(newOy);
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            case "east" -> {
-                try {
-                    int newOy = heroCell.getOy() + 1;
-                    if (newOy >= length) {
-                        throw new ImpossibleMove("You can't go east!");
-                    }
-                    cellToVisit = this.get(heroCell.getOx()).get(newOy);
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-        Game.flushScreen();
-        this.printMap();
-        if (cellToVisit != null) {
-            switch (cellToVisit.getCellType()) {
-                case VOID -> {
-                    visitCell(CellEntityType.VOID, cellToVisit, where);
-                }
-                case SANCTUARY -> {
-                    Random random = new Random();
-                    float hpToAdd = random.nextFloat(1.0F, 99.0F);
-                    hero.setCurrentHP(hero.getCurrentHP() + hpToAdd);
-                    if (hero.getCurrentHP() > 100.0F) {
-                        hero.setCurrentHP(100.0F);
-                    }
-                    float manaToAdd = random.nextFloat(1.0F, 49.0F);
-                    hero.setCurrentMana(hero.getCurrentMana() + manaToAdd);
-                    if (hero.getCurrentMana() > 50.0F) {
-                        hero.setCurrentMana(50.0F);
-                    }
-                    visitCell(CellEntityType.SANCTUARY, cellToVisit, where);
-                    System.out.println("Current HP: " + hero.getCurrentHP());
-                    System.out.println("Current mana: " + hero.getCurrentMana());
-                }
-                case PORTAL -> {
-                    int xpEarned = loggedAccount.getGamesPlayed();
-                    int gamesPlayed = loggedAccount.getGamesPlayed();
-                    gamesPlayed++;
-                    loggedAccount.setGamesPlayed(gamesPlayed);
-                    int heroLevel = hero.getLevel();
-                    heroLevel++;
-                    hero.setLevel(heroLevel);
-                    xpEarned *= 5;
-                    hero.setXp(hero.getXp() + xpEarned);
-                    while (hero.getXp() > 99) {
-                        hero.setLevel(hero.getLevel() + 1);
-                        hero.setXp(hero.getXp() - 100);
-                    }
-                    visitCell(CellEntityType.PORTAL, cellToVisit, where);
-                }
-                case ENEMY -> {
-
-                }
-            }
-        }
-        else {
-            System.out.println("The target cell is null. Invalid move!");
-        }
+    public int getLength() {
+        return length;
     }
 
-    private void visitCell(CellEntityType type, Cell cell, String where) {
-        cell.setCellType(CellEntityType.PLAYER);
-        heroCell.setCellType(CellEntityType.VOID);
-        heroCell = cell;
-        cell.setVisiting(false);
-        cell.setVisited(true);
-        Game.flushScreen();
-        System.out.println("You went " + where + "! " + "The cell you're trying to visit is: " + type);
-        this.printMap();
+    public int getHeight() {
+        return height;
+    }
+
+    public Cell getHeroCell() {
+        return heroCell;
+    }
+
+    public void setHeroCell(Cell heroCell) {
+        this.heroCell = heroCell;
     }
 }

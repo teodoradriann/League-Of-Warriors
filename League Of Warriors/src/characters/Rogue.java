@@ -10,4 +10,14 @@ public class Rogue extends Character {
     public String getProfession() {
         return "Rogue";
     }
+
+    @Override
+    public void receiveDamage(float damage) {
+
+    }
+
+    @Override
+    public float getDamage() {
+        return 0;
+    }
 }

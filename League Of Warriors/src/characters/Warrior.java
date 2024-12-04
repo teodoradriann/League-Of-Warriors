@@ -11,4 +11,14 @@ public class Warrior extends Character {
         return "Warrior";
     }
 
+    @Override
+    public void receiveDamage(float damage) {
+
+    }
+
+    @Override
+    public float getDamage() {
+        return 0;
+    }
+
 }

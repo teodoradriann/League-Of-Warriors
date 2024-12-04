@@ -232,14 +232,18 @@ public class Game {
         cell.setVisited(true);
         Game.flushScreen();
         System.out.println("You went " + where + "! " + "The cell you're trying to visit is: " + type);
-        System.out.println("Current HP: " + hero.getCurrentHP());
-        System.out.println("Current mana: " + hero.getCurrentMana());
+        showStats(hero);
         map.printMap();
     }
 
-    static void flushScreen() {
+    public static void flushScreen() {
         for (int i = 0; i < 100; i++) {
             System.out.println();
         }
+    }
+
+    public static void showStats(Character hero) {
+        System.out.println("Current HP: " + hero.getCurrentHP());
+        System.out.println("Current mana: " + hero.getCurrentMana());
     }
 }

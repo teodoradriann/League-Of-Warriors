@@ -10,5 +10,15 @@ public class Mage extends Character {
         return "Mage";
     }
 
+    @Override
+    public void receiveDamage(float damage) {
+
+    }
+
+    @Override
+    public float getDamage() {
+        return 0;
+    }
+
 
 }

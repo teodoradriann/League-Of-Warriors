@@ -68,12 +68,8 @@ public abstract class Character extends Entity implements Battle {
     }
 
     @Override
-    public void receiveDamage(int damage) {
-
-    }
+    public abstract void receiveDamage(float damage);
 
     @Override
-    public int getDamage() {
-        return 0;
-    }
+    public abstract float getDamage();
 }

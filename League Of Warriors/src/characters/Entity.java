@@ -5,7 +5,7 @@ import powers.Spell;
 
 import java.util.ArrayList;
 
-public class Entity implements Battle {
+public abstract class Entity implements Battle {
     private ArrayList<Spell> abilities;
     private float currentHP;
     private float maxHP;
@@ -14,6 +14,20 @@ public class Entity implements Battle {
     private boolean fireImmunity;
     private boolean iceImmunity;
     private boolean earthImmunity;
+
+    public void regenerateHealth(float hp) {
+        this.currentHP += hp;
+        if (this.currentHP > this.maxHP) {
+            this.currentHP = this.maxHP;
+        }
+    }
+
+    public void regenerateMana(float mana) {
+        this.currentMana += mana;
+        if (this.currentMana > this.maxMana) {
+            this.currentMana = this.maxMana;
+        }
+    }
 
     public ArrayList<Spell> getAbilities() {
         return abilities;
@@ -81,12 +95,8 @@ public class Entity implements Battle {
 
 
     @Override
-    public void receiveDamage(int damage) {
-
-    }
+    public abstract void receiveDamage(float damage);
 
     @Override
-    public int getDamage() {
-        return 0;
-    }
+    public abstract float getDamage();
 }

@@ -66,10 +66,4 @@ public abstract class Character extends Entity implements Battle {
     public void setDexterity(Integer dexterity) {
         this.dexterity = dexterity;
     }
-
-    @Override
-    public abstract void receiveDamage(float damage);
-
-    @Override
-    public abstract float getDamage();
 }

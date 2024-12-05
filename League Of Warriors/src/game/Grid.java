@@ -74,6 +74,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     }
 
     public void printMap() {
+        Game.showStats(hero);
         for (int i = 0; i < this.height; i++) {
             for (int j = 0; j < this.length; j++) {
                 Cell cell = this.get(i).get(j);

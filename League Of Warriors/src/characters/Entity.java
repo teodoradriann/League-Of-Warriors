@@ -11,6 +11,7 @@ public abstract class Entity implements Battle {
     private float maxHP;
     private float currentMana;
     private float maxMana;
+
     private boolean fireImmunity;
     private boolean iceImmunity;
     private boolean earthImmunity;
@@ -30,8 +31,10 @@ public abstract class Entity implements Battle {
     }
 
     public boolean tryToUseAbility(Spell ability, Entity enemy) {
-        // TODO: check mana, and enemy vulnerabilities
-        return true;
+        if (this.currentMana < ability.getManaCost()) {
+            return false;
+        }
+        return ability.isEffectiveAgainst(enemy);
     }
 
     public ArrayList<Spell> getAbilities() {
@@ -97,11 +100,4 @@ public abstract class Entity implements Battle {
     public void setEarthImmunity(boolean earthImmunity) {
         this.earthImmunity = earthImmunity;
     }
-
-
-    @Override
-    public abstract void receiveDamage(float damage);
-
-    @Override
-    public abstract float getDamage();
 }

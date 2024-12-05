@@ -38,20 +38,37 @@ public class Game {
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
-                    this.moveHero("north");
+                    try {
+                        this.moveHero("north");
+                    } catch (ImpossibleMove e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "s":
-                    this.moveHero("south");
+                    try {
+                        this.moveHero("south");
+                    } catch (ImpossibleMove e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "a":
-                    this.moveHero("west");
+                    try {
+                        this.moveHero("west");
+                    } catch (ImpossibleMove e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "d":
-                    this.moveHero("east");
+                    try {
+                        this.moveHero("east");
+                    } catch (ImpossibleMove e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "q":
                     flushScreen();
                     selectCharacterAndStartGame();
+
                     return;
             }
         }
@@ -78,7 +95,7 @@ public class Game {
         }
     }
 
-    private void selectCharacterAndStartGame() throws InterruptedException {
+    private void selectCharacterAndStartGame() throws InterruptedException, InvalidCommandException {
         System.out.println("Hello " + this.loggedAccount.getName() + "!");
         System.out.println("Please choose your hero :)");
         int i = 1;
@@ -126,57 +143,7 @@ public class Game {
     }
 
     public void moveHero(String where) {
-        Cell cellToVisit = null;
-        switch (where.toLowerCase()) {
-            case "north" -> {
-                try {
-                    int newOx = map.getHeroCell().getOx() - 1;
-                    if (newOx < 0) {
-                        throw new ImpossibleMove("You can't go north!");
-                    }
-                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    // System.out.println(e.getMessage());
-                }
-            }
-            case "south" -> {
-                try {
-                    int newOx = map.getHeroCell().getOx() + 1;
-                    if (newOx >= map.getHeight()) {
-                        throw new ImpossibleMove("You can't go south!");
-                    }
-                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    // System.out.println(e.getMessage());
-                }
-            }
-            case "west" -> {
-                try {
-                    int newOy = map.getHeroCell().getOy() - 1;
-                    if (newOy < 0) {
-                        throw new ImpossibleMove("You can't go west!");
-                    }
-                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    // System.out.println(e.getMessage());
-                }
-            }
-            case "east" -> {
-                try {
-                    int newOy = map.getHeroCell().getOy() + 1;
-                    if (newOy >= map.getLength()) {
-                        throw new ImpossibleMove("You can't go east!");
-                    }
-                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
-                    cellToVisit.setVisiting(true);
-                } catch (ImpossibleMove e) {
-                    // System.out.println(e.getMessage());
-                }
-            }
-        }
+        Cell cellToVisit = getCellToVisit(where);
         Game.flushScreen();
         map.printMap();
         if (cellToVisit != null) {
@@ -222,6 +189,49 @@ public class Game {
         else {
             System.out.println("The target cell is null. Invalid move!");
         }
+    }
+
+    private Cell getCellToVisit(String where) throws ImpossibleMove {
+        Cell cellToVisit = null;
+        switch (where.toLowerCase()) {
+            case "north" -> {
+                int newOx = map.getHeroCell().getOx() - 1;
+                if (newOx < 0) {
+                    throw new ImpossibleMove("You can't go north!");
+                } else {
+                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
+                    cellToVisit.setVisiting(true);
+                }
+            }
+            case "south" -> {
+                int newOx = map.getHeroCell().getOx() + 1;
+                if (newOx >= map.getHeight()) {
+                    throw new ImpossibleMove("You can't go south!");
+                } else {
+                    cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
+                    cellToVisit.setVisiting(true);
+                }
+            }
+            case "west" -> {
+                int newOy = map.getHeroCell().getOy() - 1;
+                if (newOy < 0) {
+                    throw new ImpossibleMove("You can't go west!");
+                } else {
+                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                }
+            }
+            case "east" -> {
+                int newOy = map.getHeroCell().getOy() + 1;
+                if (newOy >= map.getLength()) {
+                    throw new ImpossibleMove("You can't go east!");
+                } else {
+                    cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
+                    cellToVisit.setVisiting(true);
+                }
+            }
+        }
+        return cellToVisit;
     }
 
     private void visitCell(CellEntityType type, Cell cell, String where) {

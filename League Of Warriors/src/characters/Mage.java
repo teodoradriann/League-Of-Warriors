@@ -1,5 +1,7 @@
 package characters;
 
+import powers.Spell;
+
 public class Mage extends Character {
     public Mage(String name, Integer xp, Integer level) {
         super(name, xp, level);
@@ -16,8 +18,13 @@ public class Mage extends Character {
     }
 
     @Override
-    public float getDamage() {
+    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
         return 0;
+    }
+
+    @Override
+    public void attack(Entity enemy) {
+
     }
 
 

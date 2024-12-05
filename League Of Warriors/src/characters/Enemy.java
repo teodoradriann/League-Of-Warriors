@@ -3,25 +3,15 @@ package characters;
 import game.Game;
 import interfaces.Battle;
 import powers.Spell;
-import characters.EnemyTypes;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Enemy extends Entity implements Battle {
-    float normalAttackDamage;
-    boolean isNormalAttack;
-    EnemyTypes[] enemyTypes = EnemyTypes.values();
+    private float normalAttackDamage;
+    private final Random random = new Random();
 
-    public boolean isNormalAttack() {
-        return isNormalAttack;
-    }
-
-    public void setNormalAttack(boolean normalAttack) {
-        isNormalAttack = normalAttack;
-    }
-
-    private Enemy(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana,
+    protected Enemy(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana,
                  boolean fireImmunity, boolean iceImmunity, boolean earthImmunity, float normalAttackDamage) {
         this.setAbilities(abilities);
         this.setCurrentHP(currentHP);
@@ -34,66 +24,50 @@ public class Enemy extends Entity implements Battle {
         this.normalAttackDamage = normalAttackDamage;
     }
 
-    public Enemy createEnemy() {
-        Random random = new Random();
-        int index = random.nextInt(enemyTypes.length);
-        EnemyTypes type = enemyTypes[index];
-        Enemy enemy = null;
-        switch (type) {
-            case WEAK -> {
-                enemy = new Enemy();
-            }
-            case NORMAL -> {
-                enemy = new Enemy();
-            }
-            case STRONG -> {
-                enemy = new Enemy();
-            }
-            case BOSS -> {
-                enemy = new Enemy();
-            }
-        }
-        return enemy;
-    }
-
     @Override
     public void receiveDamage(float damage) {
-        Random random = new Random();
-        double chance = random.nextDouble();
-        if (chance < 0.5) {
-            return;
-        }
         this.setCurrentHP(this.getCurrentHP() - damage);
     }
 
     @Override
-    public float getDamage() {
-        Random random = new Random();
+    public float calculateDamage(boolean normalAttack, Spell spellCasted) {
         double chance = random.nextDouble();
         if (chance < 0.5) {
-            if (this.isNormalAttack) {
+            if (normalAttack) {
                 return normalAttackDamage * 2;
+            } else {
+                return spellCasted.getDamage() * 2;
+            }
+        } else {
+            if (normalAttack) {
+                return normalAttackDamage;
+            } else {
+               return spellCasted.getDamage();
             }
         }
-        return normalAttackDamage;
     }
 
-    public void attack(Character character) {
-        Random random = new Random();
+    @Override
+    public void attack(Entity hero) {
         double chance = random.nextDouble();
         if (chance < 0.6) {
-            int randomIndex = random.nextInt(this.getAbilities().size());
-            Spell spellToCast = this.getAbilities().get(randomIndex);
-            if (this.tryToUseAbility(spellToCast, character)) {
-                // TODO: implement attackDmg...
-
-                Game.showStats(character);
-                return;
+            if (!this.getAbilities().isEmpty()) {
+                int randomIndex = random.nextInt(this.getAbilities().size());
+                Spell spellToCast = this.getAbilities().get(randomIndex);
+                if (this.tryToUseAbility(spellToCast, hero)) {
+                    float attackDamage = calculateDamage(false, spellToCast);
+                    hero.receiveDamage(attackDamage);
+                    System.out.println("The enemy used: " + spellToCast.toString());
+                    this.getAbilities().remove(spellToCast);
+                    this.setCurrentMana(this.getCurrentMana() - spellToCast.getManaCost());
+                    Game.showStats((Character) hero);
+                    return;
+                }
             }
         }
-        float attackDamage = getDamage();
-        character.receiveDamage(attackDamage);
+        float attackDamage = calculateDamage(true, null);
+        hero.receiveDamage(attackDamage);
         System.out.println("The enemy dealt " + attackDamage + " damage to you.");
-        Game.showStats(character);
+        Game.showStats((Character) hero);
     }
 }

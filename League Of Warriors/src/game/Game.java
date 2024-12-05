@@ -137,7 +137,7 @@ public class Game {
                     cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
                     cellToVisit.setVisiting(true);
                 } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
+                    // System.out.println(e.getMessage());
                 }
             }
             case "south" -> {
@@ -149,7 +149,7 @@ public class Game {
                     cellToVisit = map.get(newOx).get(map.getHeroCell().getOy());
                     cellToVisit.setVisiting(true);
                 } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
+                    // System.out.println(e.getMessage());
                 }
             }
             case "west" -> {
@@ -161,7 +161,7 @@ public class Game {
                     cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
                     cellToVisit.setVisiting(true);
                 } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
+                    // System.out.println(e.getMessage());
                 }
             }
             case "east" -> {
@@ -173,7 +173,7 @@ public class Game {
                     cellToVisit = map.get(map.getHeroCell().getOx()).get(newOy);
                     cellToVisit.setVisiting(true);
                 } catch (ImpossibleMove e) {
-                    System.out.println(e.getMessage());
+                    // System.out.println(e.getMessage());
                 }
             }
         }
@@ -188,13 +188,13 @@ public class Game {
                     Random random = new Random();
                     float hpToAdd = random.nextFloat(1.0F, 99.0F);
                     hero.setCurrentHP(hero.getCurrentHP() + hpToAdd);
-                    if (hero.getCurrentHP() > 100.0F) {
-                        hero.setCurrentHP(100.0F);
+                    if (hero.getCurrentHP() > hero.getMaxHP()) {
+                        hero.setCurrentHP(hero.getMaxHP());
                     }
                     float manaToAdd = random.nextFloat(1.0F, 49.0F);
                     hero.setCurrentMana(hero.getCurrentMana() + manaToAdd);
-                    if (hero.getCurrentMana() > 50.0F) {
-                        hero.setCurrentMana(50.0F);
+                    if (hero.getCurrentMana() > hero.getMaxMana()) {
+                        hero.setCurrentMana(hero.getMaxMana());
                     }
                     visitCell(CellEntityType.SANCTUARY, cellToVisit, where);
                 }

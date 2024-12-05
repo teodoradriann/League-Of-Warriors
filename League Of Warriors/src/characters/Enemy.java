@@ -59,8 +59,8 @@ public class Enemy extends Entity implements Battle {
     @Override
     public void receiveDamage(float damage) {
         Random random = new Random();
-        int chanceToAvoidDamage = random.nextInt(0, 2);
-        if (chanceToAvoidDamage == 1) {
+        double chance = random.nextDouble();
+        if (chance < 0.5) {
             return;
         }
         this.setCurrentHP(this.getCurrentHP() - damage);
@@ -69,8 +69,8 @@ public class Enemy extends Entity implements Battle {
     @Override
     public float getDamage() {
         Random random = new Random();
-        int chanceToDealDoubleDamage = random.nextInt(0, 2);
-        if (chanceToDealDoubleDamage == 1) {
+        double chance = random.nextDouble();
+        if (chance < 0.5) {
             if (this.isNormalAttack) {
                 return normalAttackDamage * 2;
             }
@@ -81,16 +81,19 @@ public class Enemy extends Entity implements Battle {
     public void attack(Character character) {
         Random random = new Random();
         double chance = random.nextDouble();
-        if (chance < 0.60) {
+        if (chance < 0.6) {
             int randomIndex = random.nextInt(this.getAbilities().size());
             Spell spellToCast = this.getAbilities().get(randomIndex);
-            // if speelToCast mana < current mana attack
-            Game.showStats(character);
-        } else {
-            float attackDamage = getDamage();
-            character.setCurrentHP(character.getCurrentHP() - attackDamage);
-            System.out.println("The enemy dealt " + attackDamage + " damage to you.");
-            Game.showStats(character);
+            if (this.tryToUseAbility(spellToCast, character)) {
+                // TODO: implement attackDmg...
+
+                Game.showStats(character);
+                return;
+            }
         }
+        float attackDamage = getDamage();
+        character.receiveDamage(attackDamage);
+        System.out.println("The enemy dealt " + attackDamage + " damage to you.");
+        Game.showStats(character);
     }
 }

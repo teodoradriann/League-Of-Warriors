@@ -29,6 +29,11 @@ public abstract class Entity implements Battle {
         }
     }
 
+    public boolean tryToUseAbility(Spell ability, Entity enemy) {
+        // TODO: check mana, and enemy vulnerabilities
+        return true;
+    }
+
     public ArrayList<Spell> getAbilities() {
         return abilities;
     }

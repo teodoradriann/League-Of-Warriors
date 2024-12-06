@@ -12,6 +12,7 @@ import java.util.Random;
 public class EnemySpawner {
     private final Random random = new Random();
     private final EnemyTypes[] enemyTypes = EnemyTypes.values();
+
     // 20 - weak, 30 - normal, 30 - strong, 20 - boss
     private final int[] probabilities = {20, 30, 30, 20};
     private final int totalProbability = Arrays.stream(probabilities).sum();
@@ -31,7 +32,8 @@ public class EnemySpawner {
                 boolean iceImmunity = false;
                 boolean earthImmunity = false;
                 float normalAttackDamage = 10.0F;
-                enemy = new Enemy(abilities, currentHP, maxHP, currentMana, maxMana, fireImmunity, iceImmunity, earthImmunity, normalAttackDamage);
+                enemy = new Enemy(abilities, EnemyTypes.WEAK, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+                        iceImmunity, earthImmunity, normalAttackDamage);
             }
             case NORMAL -> {
                 ArrayList<Spell> abilities = generateSpellsArray(1, 3);
@@ -43,7 +45,8 @@ public class EnemySpawner {
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
                 float normalAttackDamage = 15.0F;
-                enemy = new Enemy(abilities, currentHP, maxHP, currentMana, maxMana, fireImmunity, iceImmunity, earthImmunity, normalAttackDamage);
+                enemy = new Enemy(abilities, EnemyTypes.NORMAL, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+                        iceImmunity, earthImmunity, normalAttackDamage);
             }
             case STRONG -> {
                 ArrayList<Spell> abilities = generateSpellsArray(3, 6);
@@ -55,7 +58,8 @@ public class EnemySpawner {
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
                 float normalAttackDamage = 20.0F;
-                enemy = new Enemy(abilities, currentHP, maxHP, currentMana, maxMana, fireImmunity, iceImmunity, earthImmunity, normalAttackDamage);
+                enemy = new Enemy(abilities, EnemyTypes.STRONG, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+                        iceImmunity, earthImmunity, normalAttackDamage);
             }
             case BOSS -> {
                 ArrayList<Spell> abilities = generateSpellsArray(4, 7);
@@ -67,7 +71,8 @@ public class EnemySpawner {
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
                 float normalAttackDamage = 25.0F;
-                enemy = new Enemy(abilities, currentHP, maxHP, currentMana, maxMana, fireImmunity, iceImmunity, earthImmunity, normalAttackDamage);
+                enemy = new Enemy(abilities, EnemyTypes.BOSS, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+                        iceImmunity, earthImmunity, normalAttackDamage);
             }
         }
         return enemy;

@@ -10,10 +10,12 @@ import java.util.Random;
 public class Enemy extends Entity implements Battle {
     private float normalAttackDamage;
     private final Random random = new Random();
+    EnemyTypes type;
 
-    protected Enemy(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana,
+    protected Enemy(ArrayList<Spell> abilities, EnemyTypes type, float currentHP, float maxHP, float currentMana, float maxMana,
                  boolean fireImmunity, boolean iceImmunity, boolean earthImmunity, float normalAttackDamage) {
         this.setAbilities(abilities);
+        this.type = type;
         this.setCurrentHP(currentHP);
         this.setMaxHP(maxHP);
         this.setCurrentMana(currentMana);
@@ -57,7 +59,7 @@ public class Enemy extends Entity implements Battle {
                 if (this.tryToUseAbility(spellToCast, hero)) {
                     float attackDamage = calculateDamage(false, spellToCast);
                     hero.receiveDamage(attackDamage);
-                    System.out.println("The enemy used: " + spellToCast.toString());
+                    System.out.println("The enemy used: " + spellToCast);
                     this.getAbilities().remove(spellToCast);
                     this.setCurrentMana(this.getCurrentMana() - spellToCast.getManaCost());
                     Game.showStats((Character) hero);
@@ -67,7 +69,13 @@ public class Enemy extends Entity implements Battle {
         }
         float attackDamage = calculateDamage(true, null);
         hero.receiveDamage(attackDamage);
+        this.regenerateMana(random.nextFloat(5.0F, 15.0F));
         System.out.println("The enemy dealt " + attackDamage + " damage to you.");
         Game.showStats((Character) hero);
+    }
+
+    @Override
+    public String toString() {
+        return type.toString() + ": " + this.getCurrentHP() + ", " + this.getCurrentMana() + ", " + "is immune to fire: " + this.isFireImmunity() + " , is immune to ice: " + this.isIceImmunity() + " , is immune to earth: " + this.isEarthImmunity();
     }
 }

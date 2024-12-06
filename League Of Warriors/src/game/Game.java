@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import characters.Enemy;
+import characters.EnemySpawner;
 import exceptions.ImpossibleMove;
 import exceptions.InvalidCommandException;
 import utils.JsonInput;
@@ -29,12 +31,12 @@ public class Game {
 
     public void run() throws InterruptedException {
         while (true) {
-            if (hero.getCurrentHP() < 0.0) {
-                System.out.println("GAME OVER! YOU DIED.");
-                TimeUnit.SECONDS.sleep(3);
-                flushScreen();
-                selectCharacterAndStartGame();
-            }
+//            if (hero.getCurrentHP() < 0.0) {
+//                System.out.println("GAME OVER! YOU DIED.");
+//                TimeUnit.SECONDS.sleep(3);
+//                flushScreen();
+//                selectCharacterAndStartGame();
+//            }
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
@@ -182,7 +184,10 @@ public class Game {
                     visitCell(CellEntityType.PORTAL, cellToVisit, where);
                 }
                 case ENEMY -> {
-
+                    EnemySpawner spawner = new EnemySpawner();
+                    Enemy enemy = spawner.createEnemy();
+                    System.out.println(enemy);
+                    Battle.startBattle(hero, enemy);
                 }
             }
         }

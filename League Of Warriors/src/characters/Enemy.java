@@ -13,16 +13,6 @@ public class Enemy extends Entity implements Battle {
 
     protected Enemy(ArrayList<Spell> abilities, EnemyTypes type, float currentHP, float maxHP, float currentMana, float maxMana,
                  boolean fireImmunity, boolean iceImmunity, boolean earthImmunity, float normalAttackDamage) {
-//        this.setAbilities(abilities);
-//        this.type = type;
-//        this.setCurrentHP(currentHP);
-//        this.setMaxHP(maxHP);
-//        this.setCurrentMana(currentMana);
-//        this.setMaxMana(maxMana);
-//        this.setFireImmunity(fireImmunity);
-//        this.setIceImmunity(iceImmunity);
-//        this.setEarthImmunity(earthImmunity);
-//        this.setNormalAttackDamage(normalAttackDamage);
         super(abilities, currentHP, maxHP, currentMana, maxMana, normalAttackDamage, fireImmunity, iceImmunity, earthImmunity);
         this.type = type;
     }

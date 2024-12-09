@@ -82,6 +82,35 @@ public abstract class Character extends Entity implements Battle {
     }
 
     @Override
+    public void receiveDamage(float damage, boolean fromSpell) {
+        Random random = new Random();
+        if (!fromSpell) {
+            if (this.dexterity >= 50) {
+                double chance = random.nextDouble();
+                if (chance < 0.5) {
+                    System.out.println("Given your extraordinary dexterity you managed to partially dodge a hit and got reduced damage!");
+                    System.out.println("The enemy dealt " + damage / 2 + " damage to you.");
+                    this.setCurrentHP(this.getCurrentHP() - damage / 2);
+                    return;
+                }
+            }
+            System.out.println("The enemy dealt " + damage + " damage to you.");
+            this.setCurrentHP(this.getCurrentHP() - damage);
+            return;
+        } else {
+            double chance = random.nextDouble();
+            if (chance < 0.5) {
+                System.out.println("You managed to partially dodge the attack and got reduced damage!");
+                System.out.println("The enemy dealt " + damage / 2 + " damage to you.");
+                this.setCurrentHP(this.getCurrentHP() - damage / 2);
+                return;
+            }
+        }
+        System.out.println("The enemy dealt " + damage + " damage to you.");
+        this.setCurrentHP(this.getCurrentHP() - damage);
+    }
+
+    @Override
     public void attack(Entity enemy) {
         Random random = new Random();
         Scanner scanner = new Scanner(System.in);

@@ -23,6 +23,6 @@ public abstract class Spell {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + " -> damage: " + this.getDamage() + ", -> mana cost: " + this.getManaCost();
+        return this.getClass().getSimpleName() + " -> damage: " + this.getDamage() + " -> mana cost: " + this.getManaCost();
     }
 }

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import characters.Enemy;
 import characters.EnemySpawner;
+import characters.Entity;
 import exceptions.ImpossibleMove;
 import exceptions.InvalidCommandException;
 import utils.JsonInput;
@@ -25,18 +26,11 @@ public class Game {
         existingAccounts = JsonInput.deserializeAccounts();
         loginScreen();
         flushScreen();
-        TimeUnit.SECONDS.sleep(0);
         selectCharacterAndStartGame();
     }
 
     public void run() throws InterruptedException {
         while (true) {
-//            if (hero.getCurrentHP() < 0.0) {
-//                System.out.println("GAME OVER! YOU DIED.");
-//                TimeUnit.SECONDS.sleep(3);
-//                flushScreen();
-//                selectCharacterAndStartGame();
-//            }
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
@@ -120,7 +114,6 @@ public class Game {
                 scanner.nextLine();
                 continue;
             }
-
             if (choice == -1) {
                 flushScreen();
                 this.init();
@@ -134,17 +127,20 @@ public class Game {
                 System.out.println("Please choose a valid character!");
             }
         }
+        this.startGame();
+    }
+
+    private void startGame() throws InterruptedException {
         flushScreen();
         Random rand = new Random();
         int length = rand.nextInt(3, 11);
         int height = rand.nextInt(3, 11);
         map = Grid.generateMap(length, height, hero);
         map.printMap();
-
         this.run();
     }
 
-    public void moveHero(String where) {
+    public void moveHero(String where) throws InterruptedException {
         Cell cellToVisit = getCellToVisit(where);
         Game.flushScreen();
         map.printMap();
@@ -182,12 +178,25 @@ public class Game {
                         hero.setXp(hero.getXp() - 100);
                     }
                     visitCell(CellEntityType.PORTAL, cellToVisit, where);
+                    System.out.println("CONGRATS! You have found the portal. You're going to the next level.");
+                    TimeUnit.SECONDS.sleep(3);
+                    this.startGame();
                 }
                 case ENEMY -> {
                     EnemySpawner spawner = new EnemySpawner();
                     Enemy enemy = spawner.createEnemy();
                     System.out.println(enemy);
-                    Battle.startBattle(hero, enemy);
+                    if (Battle.startBattle(hero, enemy)) {
+                        System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
+                        TimeUnit.SECONDS.sleep(1);
+                        visitCell(CellEntityType.ENEMY, cellToVisit, where);
+                    } else {
+                        flushScreen();
+                        System.out.println("YOU DIED.");
+                        TimeUnit.SECONDS.sleep(3);
+                        Game.flushScreen();
+                        this.selectCharacterAndStartGame();
+                    }
                 }
             }
         }
@@ -246,8 +255,7 @@ public class Game {
         cell.setVisiting(false);
         cell.setVisited(true);
         Game.flushScreen();
-        System.out.println("You went " + where + "! " + "The cell you're trying to visit is: " + type);
-        showStats(hero);
+        System.out.println("You went " + where + "! " + "The cell you just visited is: " + type);
         map.printMap();
     }
 
@@ -258,7 +266,13 @@ public class Game {
     }
 
     public static void showStats(Character hero) {
-        System.out.println("Current HP: " + hero.getCurrentHP());
+        float hp = Math.max(hero.getCurrentHP(), 0.0F);
+        System.out.println("Current HP: " + hp);
         System.out.println("Current mana: " + hero.getCurrentMana());
+    }
+
+    public static void showEnemyStats(Entity enemy) {
+        float hp = Math.max(enemy.getCurrentHP(), 0.0F);
+        System.out.println("Current enemy HP: " + hp);
     }
 }

@@ -4,7 +4,7 @@ import characters.Entity;
 import powers.Spell;
 
 public interface Battle {
-    void receiveDamage(float damage);
+    void receiveDamage(float damage, boolean fromSpell);
     float calculateDamage(boolean isNormalAttack, Spell spell);
     void attack(Entity enemy);
 }

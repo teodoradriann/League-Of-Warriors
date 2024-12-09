@@ -7,19 +7,10 @@ import java.util.Random;
 
 public class Mage extends Character {
     private final Random random = new Random();
+
     public Mage(String name, Integer xp, Integer level) {
-        super(name, xp, level);
-        this.setCurrentHP(50);
-        this.setMaxHP(50);
-        this.setCurrentMana(100);
-        this.setMaxMana(100);
-        this.setEarthImmunity(false);
-        this.setFireImmunity(false);
-        this.setIceImmunity(true);
-        this.setStrength(5);
-        this.setDexterity(25);
-        this.setCharisma(50);
-        this.setNormalAttackDamage(7.5F);
+        super(null, 50, 50, 100, 100, 7.5F, false,
+                false, true, 5, 25, 50, name, xp, level);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class EnemySpawner {
                 boolean fireImmunity = false;
                 boolean iceImmunity = false;
                 boolean earthImmunity = false;
-                float normalAttackDamage = 10.0F;
+                float normalAttackDamage = 5.0F;
                 enemy = new Enemy(abilities, EnemyTypes.WEAK, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                         iceImmunity, earthImmunity, normalAttackDamage);
             }
@@ -39,7 +39,7 @@ public class EnemySpawner {
                 boolean fireImmunity = false;
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
-                float normalAttackDamage = 15.0F;
+                float normalAttackDamage = 9.0F;
                 enemy = new Enemy(abilities, EnemyTypes.NORMAL, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                         iceImmunity, earthImmunity, normalAttackDamage);
             }
@@ -52,7 +52,7 @@ public class EnemySpawner {
                 boolean fireImmunity = random.nextBoolean();
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
-                float normalAttackDamage = 20.0F;
+                float normalAttackDamage = 12.5F;
                 enemy = new Enemy(abilities, EnemyTypes.STRONG, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                         iceImmunity, earthImmunity, normalAttackDamage);
             }
@@ -65,7 +65,7 @@ public class EnemySpawner {
                 boolean fireImmunity = random.nextBoolean();
                 boolean iceImmunity = random.nextBoolean();
                 boolean earthImmunity = random.nextBoolean();
-                float normalAttackDamage = 25.0F;
+                float normalAttackDamage = 20.0F;
                 enemy = new Enemy(abilities, EnemyTypes.BOSS, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                         iceImmunity, earthImmunity, normalAttackDamage);
             }
@@ -83,6 +83,4 @@ public class EnemySpawner {
         }
         return enemyTypes[0];
     }
-
-
 }

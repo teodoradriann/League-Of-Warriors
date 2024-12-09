@@ -24,6 +24,18 @@ public abstract class Entity implements Battle {
 
     private static final Random random = new Random();
 
+    public Entity(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana, float normalAttackDamage, boolean fireImmunity, boolean iceImmunity, boolean earthImmunity) {
+        this.abilities = abilities;
+        this.currentHP = currentHP;
+        this.maxHP = maxHP;
+        this.currentMana = currentMana;
+        this.maxMana = maxMana;
+        this.normalAttackDamage = normalAttackDamage;
+        this.fireImmunity = fireImmunity;
+        this.iceImmunity = iceImmunity;
+        this.earthImmunity = earthImmunity;
+    }
+
     public static ArrayList<Spell> generateSpellsArray(int lowerBound, int higherBound) {
         ArrayList<Spell> abilities = new ArrayList<>();
         abilities.add(new Fire());
@@ -139,23 +151,5 @@ public abstract class Entity implements Battle {
 
     public void setNormalAttackDamage(float normalAttackDamage) {
         this.normalAttackDamage = normalAttackDamage;
-    }
-
-    public void showImmunities() {
-        StringBuilder sb = new StringBuilder();
-        if (fireImmunity) {
-            sb.append("Fire ");
-        }
-        if (earthImmunity) {
-            sb.append("Earth ");
-        }
-        if (iceImmunity) {
-            sb.append("Ice ");
-        }
-        if (sb.isEmpty()) {
-            System.out.println("Immune to nothing.");
-        } else {
-            System.out.println("Immune to " + sb);
-        }
     }
 }

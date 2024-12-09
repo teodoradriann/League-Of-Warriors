@@ -5,18 +5,8 @@ import powers.Spell;
 public class Rogue extends Character {
 
     public Rogue(String name, Integer xp, Integer level) {
-        super(name, xp, level);
-        this.setCurrentHP(80);
-        this.setMaxHP(80);
-        this.setCurrentMana(60);
-        this.setMaxMana(60);
-        this.setEarthImmunity(true);
-        this.setFireImmunity(false);
-        this.setIceImmunity(false);
-        this.setStrength(25);
-        this.setDexterity(50);
-        this.setCharisma(5);
-        this.setNormalAttackDamage(10.0F);
+        super(null, 80, 80, 60, 60, 10.0F, false, false,
+                true, 25, 5, 50, name, xp, level);
     }
 
     @Override

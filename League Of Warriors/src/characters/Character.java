@@ -5,6 +5,7 @@ import game.Game;
 import interfaces.Battle;
 import powers.Spell;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -17,7 +18,14 @@ public abstract class Character extends Entity implements Battle {
     protected Integer charisma;
     protected Integer dexterity;
 
-    public Character(String name, Integer xp, Integer level) {
+    public Character(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana,
+                     float normalAttackDamage, boolean fireImmunity, boolean iceImmunity, boolean earthImmunity,
+                     Integer strength, Integer charisma, Integer dexterity, String name, Integer xp, Integer level) {
+
+        super(abilities, currentHP, maxHP, currentMana, maxMana, normalAttackDamage, fireImmunity, iceImmunity, earthImmunity);
+        this.strength = strength;
+        this.charisma = charisma;
+        this.dexterity = dexterity;
         this.name = name;
         this.xp = xp;
         this.level = level;

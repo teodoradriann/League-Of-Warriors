@@ -29,6 +29,10 @@ public class Game {
         selectCharacterAndStartGame();
     }
 
+    public void testInit() {
+        existingAccounts = JsonInput.deserializeAccounts();
+    }
+
     public void run() throws InterruptedException {
         while (true) {
             String key = scanner.nextLine();
@@ -64,7 +68,6 @@ public class Game {
                 case "q":
                     flushScreen();
                     selectCharacterAndStartGame();
-
                     return;
             }
         }

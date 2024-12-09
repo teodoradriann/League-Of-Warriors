@@ -5,18 +5,8 @@ import powers.Spell;
 public class Warrior extends Character {
 
     public Warrior(String name, Integer xp, Integer level) {
-        super(name, xp, level);
-        this.setCurrentHP(100);
-        this.setMaxHP(100);
-        this.setCurrentMana(40);
-        this.setMaxMana(40);
-        this.setEarthImmunity(false);
-        this.setFireImmunity(true);
-        this.setIceImmunity(false);
-        this.setStrength(50);
-        this.setDexterity(25);
-        this.setCharisma(5);
-        this.setNormalAttackDamage(15.0F);
+        super(null, 100, 100, 40, 40, 15.0F, true, false,
+                false, 50, 5, 25, name, xp, level);
     }
 
     @Override

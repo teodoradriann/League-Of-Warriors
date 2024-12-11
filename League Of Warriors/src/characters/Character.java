@@ -199,6 +199,5 @@ public abstract class Character extends Entity implements Battle {
                 }
             }
         }
-
     }
 }

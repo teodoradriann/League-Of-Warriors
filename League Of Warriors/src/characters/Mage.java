@@ -1,13 +1,11 @@
 package characters;
 
-import game.Game;
 import powers.Spell;
 
-import java.util.Random;
 
 public class Mage extends Character {
     public Mage(String name, Integer xp, Integer level) {
-        super(null, 50, 50, 100, 100, 7.5F, false,
+        super(null, 50, 70, 100, 120, 7.5F, false,
                 false, true, 10, 50, 30, name, xp, level);
     }
 

@@ -7,5 +7,4 @@ public enum CellEntityType {
     SANCTUARY,
     PORTAL,
     TO_VISIT,
-    TEST_ENEMY
 }

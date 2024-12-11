@@ -7,7 +7,7 @@ import java.util.Random;
 public class Warrior extends Character {
 
     public Warrior(String name, Integer xp, Integer level) {
-        super(null, 100, 100, 40, 40, 15.0F, true, false,
+        super(null, 100, 120, 40, 50, 15.0F, true, false,
                 false, 50, 10, 30, name, xp, level);
     }
 

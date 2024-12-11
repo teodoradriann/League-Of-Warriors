@@ -22,107 +22,45 @@ public class Game {
     private Character hero;
     Scanner scanner = new Scanner(System.in);
 
-    public void init() throws InterruptedException {
+    public void init(boolean test) throws InterruptedException {
         existingAccounts = JsonInput.deserializeAccounts();
         loginScreen();
         flushScreen();
         try {
-            selectCharacterAndStartGame();
+            selectCharacterAndStartGame(test);
         } catch (InvalidCommandException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void testInit() throws InterruptedException {
-        existingAccounts = JsonInput.deserializeAccounts();
-        if (existingAccounts != null) {
-            loggedAccount = existingAccounts.getFirst();
-            hero = loggedAccount.getOwnedCharacters().getFirst();
-            hero.setCurrentHP(50.0F);
-            hero.setCurrentMana(40.0F);
-            hero.setMaxMana(100.0F);
-            map = Grid.generateTestGrid(hero);
-            map.printMap();
-            TimeUnit.SECONDS.sleep(2);
-            try {
-                moveHero("east");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("east");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("east");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("east");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("south");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("south");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("south");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-            TimeUnit.SECONDS.sleep(1);
-            try {
-                moveHero("south");
-            } catch (ImpossibleMove e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    public void run() throws InterruptedException {
+    public void run(boolean test) throws InterruptedException {
         while (true) {
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
                     try {
-                        moveHero("north");
+                        moveHero("north", test);
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "s":
                     try {
-                        moveHero("south");
+                        moveHero("south", true);
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "a":
                     try {
-                        moveHero("west");
+                        moveHero("west", true);
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "d":
                     try {
-                        moveHero("east");
+                        moveHero("east", true);
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
@@ -130,7 +68,7 @@ public class Game {
                 case "q":
                     flushScreen();
                     try {
-                        selectCharacterAndStartGame();
+                        selectCharacterAndStartGame(test);
                     } catch (InvalidCommandException e) {
                         System.out.println(e.getMessage());
                     }
@@ -161,7 +99,7 @@ public class Game {
         }
     }
 
-    private void selectCharacterAndStartGame() throws InterruptedException, InvalidCommandException {
+    private void selectCharacterAndStartGame(boolean test) throws InterruptedException, InvalidCommandException {
         System.out.println("Hello " + this.loggedAccount.getName() + "!");
         System.out.println("Please choose your hero :)");
         System.out.println("COMMANDS: W - north | A - west | S - south | D - east | Q - quit");
@@ -188,7 +126,7 @@ public class Game {
 
             if (choice == -1) {
                 flushScreen();
-                this.init();
+                init(test);
                 break;
             }
 
@@ -199,20 +137,24 @@ public class Game {
                 System.out.println("Please choose a valid character!");
             }
         }
-        startGame();
+        startGame(test);
     }
 
-    private void startGame() throws InterruptedException {
+    private void startGame(boolean test) throws InterruptedException {
         flushScreen();
         Random rand = new Random();
         int length = rand.nextInt(3, 11);
         int height = rand.nextInt(3, 11);
-        map = Grid.generateMap(length, height, hero);
+        if (!test) {
+            map = Grid.generateMap(length, height, hero);
+        } else {
+            map = Grid.generateTestGrid(hero);
+        }
         map.printMap();
-        run();
+        run(test);
     }
 
-    public void moveHero(String where) throws InterruptedException, ImpossibleMove {
+    public void moveHero(String where, boolean test) throws InterruptedException, ImpossibleMove {
         Cell cellToVisit = getCellToVisit(where);
         Game.flushScreen();
         map.printMap();
@@ -251,11 +193,16 @@ public class Game {
                 visitCell(CellEntityType.PORTAL, cellToVisit, where);
                 System.out.println("CONGRATS! You have found the portal. You're going to the next level.");
                 TimeUnit.SECONDS.sleep(3);
-                startGame();
+                startGame(test);
             }
             case ENEMY -> {
                 EnemySpawner spawner = new EnemySpawner();
-                Enemy enemy = spawner.createEnemy();
+                Enemy enemy;
+                if (!test) {
+                    enemy = spawner.createEnemy();
+                } else {
+                    enemy = spawner.createTestEnemy();
+                }
                 if (Battle.startBattle(hero, enemy)) {
                     System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
                     TimeUnit.SECONDS.sleep(1);
@@ -266,23 +213,11 @@ public class Game {
                     TimeUnit.SECONDS.sleep(3);
                     Game.flushScreen();
                     try {
-                        selectCharacterAndStartGame();
+                        selectCharacterAndStartGame(test);
                     } catch (InvalidCommandException e) {
                         System.out.println(e.getMessage());
                     }
 
-                }
-            }
-            case TEST_ENEMY -> {
-                EnemySpawner spawner = new EnemySpawner();
-                Enemy enemy = spawner.createTestEnemy();
-                if (Battle.startTestBattle(hero, enemy)) {
-                    System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
-                    TimeUnit.SECONDS.sleep(1);
-                    visitCell(CellEntityType.TEST_ENEMY, cellToVisit, where);
-                } else {
-                    flushScreen();
-                    System.out.println("YOU DIED.");
                 }
             }
         }

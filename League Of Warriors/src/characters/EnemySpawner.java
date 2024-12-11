@@ -1,4 +1,5 @@
 package characters;
+import powers.Ice;
 import powers.Spell;
 
 import java.util.ArrayList;
@@ -76,14 +77,15 @@ public class EnemySpawner {
     public Enemy createTestEnemy() {
         Enemy enemy;
         ArrayList<Spell> abilities = new ArrayList<>();
+        abilities.add(new Ice());
         float currentHP = 500;
         float maxHP = 500;
-        float currentMana = 1;
-        float maxMana = 1;
-        boolean fireImmunity = false;
-        boolean iceImmunity = false;
-        boolean earthImmunity = false;
-        float normalAttackDamage = 1.0F;
+        float currentMana = 20;
+        float maxMana = 20;
+        boolean fireImmunity = random.nextBoolean();
+        boolean iceImmunity = random.nextBoolean();
+        boolean earthImmunity = random.nextBoolean();
+        float normalAttackDamage = 5.0F;
         enemy = new Enemy(abilities, EnemyTypes.WEAK, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                 iceImmunity, earthImmunity, normalAttackDamage);
         return enemy;

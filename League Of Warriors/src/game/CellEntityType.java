@@ -6,5 +6,6 @@ public enum CellEntityType {
     ENEMY,
     SANCTUARY,
     PORTAL,
-    TO_VISIT
+    TO_VISIT,
+    TEST_ENEMY
 }

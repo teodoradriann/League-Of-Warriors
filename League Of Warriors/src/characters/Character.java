@@ -31,6 +31,9 @@ public abstract class Character extends Entity implements Battle {
         this.level = level;
     }
 
+    protected abstract float getSpellDamageMultiplier(Spell spellCasted);
+    protected abstract float getNormalAttackMultiplier();
+
     public abstract String getProfession();
 
     public String getName() {
@@ -82,11 +85,31 @@ public abstract class Character extends Entity implements Battle {
     }
 
     @Override
+    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
+        Random random = new Random();
+        double chance = random.nextDouble();
+        boolean critHit = chance < 0.5;
+
+        float damage;
+        if (isNormalAttack) {
+            damage = this.getNormalAttackMultiplier();
+        } else {
+            damage = this.getSpellDamageMultiplier(spellCasted);
+        }
+        if (critHit) {
+            System.out.println("Given your will to beat your enemy you successfully hit a CRIT hit.");
+            return 2 * damage;
+        } else {
+            return damage;
+        }
+    }
+
+    @Override
     public void receiveDamage(float damage, boolean fromSpell) {
         Random random = new Random();
+        double chance = random.nextDouble();
         if (!fromSpell) {
             if (this.dexterity >= 50) {
-                double chance = random.nextDouble();
                 if (chance < 0.5) {
                     System.out.println("Given your extraordinary dexterity you managed to partially dodge a hit and got reduced damage!");
                     System.out.println("The enemy dealt " + damage / 2 + " damage to you.");
@@ -98,7 +121,6 @@ public abstract class Character extends Entity implements Battle {
             this.setCurrentHP(this.getCurrentHP() - damage);
             return;
         } else {
-            double chance = random.nextDouble();
             if (chance < 0.5) {
                 System.out.println("You managed to partially dodge the attack and got reduced damage!");
                 System.out.println("The enemy dealt " + damage / 2 + " damage to you.");
@@ -132,7 +154,7 @@ public abstract class Character extends Entity implements Battle {
             }
             attackDamage = calculateDamage(true, null);
             enemy.receiveDamage(attackDamage, false);
-            this.regenerateMana(random.nextFloat(5.0F, 15.0F));
+            regenerateMana(random.nextFloat(5.0F, 15.0F));
             Game.showEnemyStats(enemy);
         } else {
             int i = 2;

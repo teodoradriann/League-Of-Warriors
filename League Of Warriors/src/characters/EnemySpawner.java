@@ -73,6 +73,22 @@ public class EnemySpawner {
         return enemy;
     }
 
+    public Enemy createTestEnemy() {
+        Enemy enemy;
+        ArrayList<Spell> abilities = new ArrayList<>();
+        float currentHP = 500;
+        float maxHP = 500;
+        float currentMana = 1;
+        float maxMana = 1;
+        boolean fireImmunity = false;
+        boolean iceImmunity = false;
+        boolean earthImmunity = false;
+        float normalAttackDamage = 1.0F;
+        enemy = new Enemy(abilities, EnemyTypes.WEAK, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+                iceImmunity, earthImmunity, normalAttackDamage);
+        return enemy;
+    }
+
     private EnemyTypes getEnemyType(int probability) {
         int cumulativeProbability = 0;
         for (int i = 0; i < probabilities.length; i++) {

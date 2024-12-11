@@ -4,7 +4,7 @@ import characters.Entity;
 
 public class Fire extends Spell {
     public Fire() {
-        super(40.0F, 25.0F);
+        super(35.0F, 25.0F);
     }
 
     @Override

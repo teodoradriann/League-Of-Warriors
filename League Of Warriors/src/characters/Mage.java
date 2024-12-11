@@ -6,25 +6,23 @@ import powers.Spell;
 import java.util.Random;
 
 public class Mage extends Character {
-    private final Random random = new Random();
-
     public Mage(String name, Integer xp, Integer level) {
         super(null, 50, 50, 100, 100, 7.5F, false,
                 false, true, 10, 50, 30, name, xp, level);
     }
 
     @Override
-    public String getProfession() {
-        return "Mage";
+    protected float getSpellDamageMultiplier(Spell spellCasted) {
+        return spellCasted.getDamage() + spellCasted.getDamage() * this.charisma * 0.008f;
     }
 
     @Override
-    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
-        if (isNormalAttack) {
-            return this.getNormalAttackDamage();
-        }
-        else {
-            return (float) (spellCasted.getDamage() + spellCasted.getDamage() * this.charisma * 0.008);
-        }
+    protected float getNormalAttackMultiplier() {
+        return this.getNormalAttackDamage();
+    }
+
+    @Override
+    public String getProfession() {
+        return "Mage";
     }
 }

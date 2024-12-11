@@ -2,6 +2,8 @@ package characters;
 
 import powers.Spell;
 
+import java.util.Random;
+
 public class Rogue extends Character {
 
     public Rogue(String name, Integer xp, Integer level) {
@@ -10,12 +12,18 @@ public class Rogue extends Character {
     }
 
     @Override
+    protected float getSpellDamageMultiplier(Spell spellCasted) {
+        return spellCasted.getDamage() + spellCasted.getDamage() * this.dexterity * 0.008f;
+    }
+
+    @Override
+    protected float getNormalAttackMultiplier() {
+        return this.getNormalAttackDamage();
+    }
+
+    @Override
     public String getProfession() {
         return "Rogue";
     }
 
-    @Override
-    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
-        return 0;
-    }
 }

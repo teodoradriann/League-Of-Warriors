@@ -26,11 +26,73 @@ public class Game {
         existingAccounts = JsonInput.deserializeAccounts();
         loginScreen();
         flushScreen();
-        selectCharacterAndStartGame();
+        try {
+            selectCharacterAndStartGame();
+        } catch (InvalidCommandException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void testInit() {
+    public void testInit() throws InterruptedException {
         existingAccounts = JsonInput.deserializeAccounts();
+        if (existingAccounts != null) {
+            loggedAccount = existingAccounts.getFirst();
+            hero = loggedAccount.getOwnedCharacters().getFirst();
+            hero.setCurrentHP(50.0F);
+            hero.setCurrentMana(40.0F);
+            hero.setMaxMana(100.0F);
+            map = Grid.generateTestGrid(hero);
+            map.printMap();
+            TimeUnit.SECONDS.sleep(2);
+            try {
+                moveHero("east");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("east");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("east");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("east");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("south");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("south");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("south");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+            TimeUnit.SECONDS.sleep(1);
+            try {
+                moveHero("south");
+            } catch (ImpossibleMove e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public void run() throws InterruptedException {
@@ -39,36 +101,41 @@ public class Game {
             switch (key.toLowerCase()) {
                 case "w":
                     try {
-                        this.moveHero("north");
+                        moveHero("north");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "s":
                     try {
-                        this.moveHero("south");
+                        moveHero("south");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "a":
                     try {
-                        this.moveHero("west");
+                        moveHero("west");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "d":
                     try {
-                        this.moveHero("east");
+                        moveHero("east");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "q":
                     flushScreen();
-                    selectCharacterAndStartGame();
-                    return;
+                    try {
+                        selectCharacterAndStartGame();
+                    } catch (InvalidCommandException e) {
+                        System.out.println(e.getMessage());
+                    }
+                default:
+                    System.out.println("Choose a valid key: w - north | a - east | s - south | d - right | q - exit ");
             }
         }
     }
@@ -97,6 +164,7 @@ public class Game {
     private void selectCharacterAndStartGame() throws InterruptedException, InvalidCommandException {
         System.out.println("Hello " + this.loggedAccount.getName() + "!");
         System.out.println("Please choose your hero :)");
+        System.out.println("COMMANDS: W - north | A - west | S - south | D - east | Q - quit");
         int i = 1;
         System.out.println("-1: Go back to login screen.");
         for (Character character : this.loggedAccount.getOwnedCharacters()) {
@@ -117,6 +185,7 @@ public class Game {
                 scanner.nextLine();
                 continue;
             }
+
             if (choice == -1) {
                 flushScreen();
                 this.init();
@@ -130,7 +199,7 @@ public class Game {
                 System.out.println("Please choose a valid character!");
             }
         }
-        this.startGame();
+        startGame();
     }
 
     private void startGame() throws InterruptedException {
@@ -140,71 +209,82 @@ public class Game {
         int height = rand.nextInt(3, 11);
         map = Grid.generateMap(length, height, hero);
         map.printMap();
-        this.run();
+        run();
     }
 
-    public void moveHero(String where) throws InterruptedException {
+    public void moveHero(String where) throws InterruptedException, ImpossibleMove {
         Cell cellToVisit = getCellToVisit(where);
         Game.flushScreen();
         map.printMap();
-        if (cellToVisit != null) {
-            switch (cellToVisit.getCellType()) {
-                case VOID -> {
-                    visitCell(CellEntityType.VOID, cellToVisit, where);
+        switch (cellToVisit.getCellType()) {
+            case VOID -> {
+                visitCell(CellEntityType.VOID, cellToVisit, where);
+            }
+            case SANCTUARY -> {
+                Random random = new Random();
+                float hpToAdd = random.nextFloat(1.0F, 99.0F);
+                hero.setCurrentHP(hero.getCurrentHP() + hpToAdd);
+                if (hero.getCurrentHP() > hero.getMaxHP()) {
+                    hero.setCurrentHP(hero.getMaxHP());
                 }
-                case SANCTUARY -> {
-                    Random random = new Random();
-                    float hpToAdd = random.nextFloat(1.0F, 99.0F);
-                    hero.setCurrentHP(hero.getCurrentHP() + hpToAdd);
-                    if (hero.getCurrentHP() > hero.getMaxHP()) {
-                        hero.setCurrentHP(hero.getMaxHP());
-                    }
-                    float manaToAdd = random.nextFloat(1.0F, 49.0F);
-                    hero.setCurrentMana(hero.getCurrentMana() + manaToAdd);
-                    if (hero.getCurrentMana() > hero.getMaxMana()) {
-                        hero.setCurrentMana(hero.getMaxMana());
-                    }
-                    visitCell(CellEntityType.SANCTUARY, cellToVisit, where);
+                float manaToAdd = random.nextFloat(1.0F, 49.0F);
+                hero.setCurrentMana(hero.getCurrentMana() + manaToAdd);
+                if (hero.getCurrentMana() > hero.getMaxMana()) {
+                    hero.setCurrentMana(hero.getMaxMana());
                 }
-                case PORTAL -> {
-                    int xpEarned = loggedAccount.getGamesPlayed();
-                    int gamesPlayed = loggedAccount.getGamesPlayed();
-                    gamesPlayed++;
-                    loggedAccount.setGamesPlayed(gamesPlayed);
-                    int heroLevel = hero.getLevel();
-                    heroLevel++;
-                    hero.setLevel(heroLevel);
-                    xpEarned *= 5;
-                    hero.setXp(hero.getXp() + xpEarned);
-                    while (hero.getXp() > 99) {
-                        hero.setLevel(hero.getLevel() + 1);
-                        hero.setXp(hero.getXp() - 100);
-                    }
-                    visitCell(CellEntityType.PORTAL, cellToVisit, where);
-                    System.out.println("CONGRATS! You have found the portal. You're going to the next level.");
+                visitCell(CellEntityType.SANCTUARY, cellToVisit, where);
+            }
+            case PORTAL -> {
+                int xpEarned = loggedAccount.getGamesPlayed();
+                int gamesPlayed = loggedAccount.getGamesPlayed();
+                gamesPlayed++;
+                loggedAccount.setGamesPlayed(gamesPlayed);
+                int heroLevel = hero.getLevel();
+                heroLevel++;
+                hero.setLevel(heroLevel);
+                xpEarned *= 5;
+                hero.setXp(hero.getXp() + xpEarned);
+                while (hero.getXp() > 99) {
+                    hero.setLevel(hero.getLevel() + 1);
+                    hero.setXp(hero.getXp() - 100);
+                }
+                visitCell(CellEntityType.PORTAL, cellToVisit, where);
+                System.out.println("CONGRATS! You have found the portal. You're going to the next level.");
+                TimeUnit.SECONDS.sleep(3);
+                startGame();
+            }
+            case ENEMY -> {
+                EnemySpawner spawner = new EnemySpawner();
+                Enemy enemy = spawner.createEnemy();
+                if (Battle.startBattle(hero, enemy)) {
+                    System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
+                    TimeUnit.SECONDS.sleep(1);
+                    visitCell(CellEntityType.ENEMY, cellToVisit, where);
+                } else {
+                    flushScreen();
+                    System.out.println("YOU DIED.");
                     TimeUnit.SECONDS.sleep(3);
-                    this.startGame();
-                }
-                case ENEMY -> {
-                    EnemySpawner spawner = new EnemySpawner();
-                    Enemy enemy = spawner.createEnemy();
-                    System.out.println(enemy);
-                    if (Battle.startBattle(hero, enemy)) {
-                        System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
-                        TimeUnit.SECONDS.sleep(1);
-                        visitCell(CellEntityType.ENEMY, cellToVisit, where);
-                    } else {
-                        flushScreen();
-                        System.out.println("YOU DIED.");
-                        TimeUnit.SECONDS.sleep(3);
-                        Game.flushScreen();
-                        this.selectCharacterAndStartGame();
+                    Game.flushScreen();
+                    try {
+                        selectCharacterAndStartGame();
+                    } catch (InvalidCommandException e) {
+                        System.out.println(e.getMessage());
                     }
+
                 }
             }
-        }
-        else {
-            System.out.println("The target cell is null. Invalid move!");
+            case TEST_ENEMY -> {
+                EnemySpawner spawner = new EnemySpawner();
+                Enemy enemy = spawner.createTestEnemy();
+                if (Battle.startTestBattle(hero, enemy)) {
+                    System.out.println("YOU HAVE DEFEATED YOUR ENEMY.");
+                    TimeUnit.SECONDS.sleep(1);
+                    visitCell(CellEntityType.TEST_ENEMY, cellToVisit, where);
+                } else {
+                    flushScreen();
+                    System.out.println("YOU DIED.");
+                }
+            }
         }
     }
 

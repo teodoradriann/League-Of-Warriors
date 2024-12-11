@@ -1,11 +1,8 @@
 package game;
 
-import account.Account;
 import characters.Character;
-import exceptions.ImpossibleMove;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class Grid extends ArrayList<ArrayList<Cell>> {
@@ -13,12 +10,64 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     private int height;
     private Character hero;
     private Cell heroCell;
-    private Account loggedAccount;
 
     private Grid(int length, int height, Character hero) {
         this.length = length;
         this.height = height;
         this.hero = hero;
+    }
+
+
+    public static Grid generateTestGrid(Character hero) {
+        Grid map = new Grid(5, 5, hero);
+
+        for (int i = 0; i < 5; i++) {
+            ArrayList<Cell> row = new ArrayList<>();
+            for (int j = 0; j < 5; j++) {
+                row.add(new Cell(i, j, CellEntityType.VOID, false));
+            }
+            map.add(row);
+        }
+
+        // P N N S N
+        map.get(0).set(0, new Cell(0, 0, CellEntityType.PLAYER, true));
+        map.get(0).set(1, new Cell(0, 1, CellEntityType.VOID, false));
+        map.get(0).set(2, new Cell(0, 2, CellEntityType.VOID, false));
+        map.get(0).set(3, new Cell(0, 3, CellEntityType.SANCTUARY, false));
+        map.get(0).set(4, new Cell(0, 4, CellEntityType.VOID, false));
+
+        // N N N S N
+        map.get(1).set(0, new Cell(1, 0, CellEntityType.VOID, false));
+        map.get(1).set(1, new Cell(1, 1, CellEntityType.VOID, false));
+        map.get(1).set(2, new Cell(1, 2, CellEntityType.VOID, false));
+        map.get(1).set(3, new Cell(1, 3, CellEntityType.SANCTUARY, false));
+        map.get(1).set(4, new Cell(1, 4, CellEntityType.VOID, false));
+
+        // S N N N N
+        map.get(2).set(0, new Cell(2, 0, CellEntityType.SANCTUARY, false));
+        map.get(2).set(1, new Cell(2, 1, CellEntityType.VOID, false));
+        map.get(2).set(2, new Cell(2, 2, CellEntityType.VOID, false));
+        map.get(2).set(3, new Cell(2, 3, CellEntityType.VOID, false));
+        map.get(2).set(4, new Cell(2, 4, CellEntityType.VOID, false));
+
+        // N N N N E
+        map.get(3).set(0, new Cell(3, 0, CellEntityType.VOID, false));
+        map.get(3).set(1, new Cell(3, 1, CellEntityType.VOID, false));
+        map.get(3).set(2, new Cell(3, 2, CellEntityType.VOID, false));
+        map.get(3).set(3, new Cell(3, 3, CellEntityType.VOID, false));
+        map.get(3).set(4, new Cell(3, 4, CellEntityType.TEST_ENEMY, false));
+
+        // N N N S F
+        map.get(4).set(0, new Cell(4, 0, CellEntityType.VOID, false));
+        map.get(4).set(1, new Cell(4, 1, CellEntityType.VOID, false));
+        map.get(4).set(2, new Cell(4, 2, CellEntityType.VOID, false));
+        map.get(4).set(3, new Cell(4, 3, CellEntityType.SANCTUARY, false));
+        map.get(4).set(4, new Cell(4, 4, CellEntityType.PORTAL, false));
+
+        map.heroCell = map.get(0).get(0);
+        map.hero = hero;
+
+        return map;
     }
 
     static public Grid generateMap(int length, int height, Character hero) {
@@ -87,7 +136,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                             System.out.print("* ");
                         }
                     }
-                    case ENEMY -> {
+                    case ENEMY, TEST_ENEMY -> {
                         if (cell.isVisited() || cell.isVisiting()) {
                             System.out.print(CellEntityLetter.E + " ");
                         } else {

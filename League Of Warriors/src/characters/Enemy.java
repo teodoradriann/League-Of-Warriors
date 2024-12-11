@@ -32,23 +32,25 @@ public class Enemy extends Entity implements Battle {
     }
 
     @Override
-    public float calculateDamage(boolean normalAttack, Spell spellCasted) {
+    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
+        Random random = new Random();
         double chance = random.nextDouble();
-        if (chance < 0.5) {
-            System.out.println("The enemy hit a CRIT hit on you!");
-            if (normalAttack) {
-                return this.getNormalAttackDamage() * 2;
-            } else {
-                return spellCasted.getDamage() * 2;
-            }
+        boolean critHit = chance < 0.5;
+        float damage;
+
+        if (isNormalAttack) {
+            damage = this.getNormalAttackDamage();
         } else {
-            if (normalAttack) {
-                return this.getNormalAttackDamage();
-            } else {
-               return spellCasted.getDamage();
-            }
+            damage = spellCasted.getDamage();
+        }
+        if (critHit) {
+            System.out.println("The enemy hit a CRIT hit on you!");
+            return 2 * damage;
+        } else {
+            return damage;
         }
     }
+
 
     @Override
     public void attack(Entity hero) {

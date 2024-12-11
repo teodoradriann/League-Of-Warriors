@@ -187,6 +187,9 @@ public class Game {
                 xpEarned *= 5;
                 hero.setXp(hero.getXp() + xpEarned);
                 while (hero.getXp() > 99) {
+                    hero.setCharisma(hero.getCharisma() + 5);
+                    hero.setDexterity(hero.getDexterity() + 5);
+                    hero.setStrength(hero.getStrength() + 5);
                     hero.setLevel(hero.getLevel() + 1);
                     hero.setXp(hero.getXp() - 100);
                 }

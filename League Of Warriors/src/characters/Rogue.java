@@ -2,7 +2,6 @@ package characters;
 
 import powers.Spell;
 
-import java.util.Random;
 
 public class Rogue extends Character {
 

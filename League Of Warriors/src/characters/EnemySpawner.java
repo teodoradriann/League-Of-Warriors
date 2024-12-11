@@ -1,4 +1,5 @@
 package characters;
+import powers.Earth;
 import powers.Ice;
 import powers.Spell;
 
@@ -76,12 +77,11 @@ public class EnemySpawner {
 
     public Enemy createTestEnemy() {
         Enemy enemy;
-        ArrayList<Spell> abilities = new ArrayList<>();
-        abilities.add(new Ice());
+        ArrayList<Spell> abilities = Entity.generateSpellsArray(3, 7);
         float currentHP = 500;
         float maxHP = 500;
-        float currentMana = 20;
-        float maxMana = 20;
+        float currentMana = 50;
+        float maxMana = 50;
         boolean fireImmunity = random.nextBoolean();
         boolean iceImmunity = random.nextBoolean();
         boolean earthImmunity = random.nextBoolean();

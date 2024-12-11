@@ -2,12 +2,15 @@ package characters;
 
 import powers.Spell;
 
+import java.util.Arrays;
+
 
 public class Rogue extends Character {
 
     public Rogue(String name, Integer xp, Integer level) {
         super(null, 80, 100, 60, 80, 10.0F, false, false,
-                true, 30, 10, 50, name, xp, level);
+                true, 30, 10, 50, name, xp, level,
+                AttributeTypes.DEXTERITY, Arrays.asList(AttributeTypes.STRENGTH, AttributeTypes.CHARISMA));;
     }
 
     @Override

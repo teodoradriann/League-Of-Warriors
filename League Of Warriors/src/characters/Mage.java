@@ -1,12 +1,15 @@
 package characters;
 
 import powers.Spell;
+import java.util.Arrays;
 
 
 public class Mage extends Character {
+
     public Mage(String name, Integer xp, Integer level) {
         super(null, 50, 70, 100, 120, 7.5F, false,
-                false, true, 10, 50, 30, name, xp, level);
+                false, true, 10, 50, 30, name, xp, level,
+                AttributeTypes.CHARISMA, Arrays.asList(AttributeTypes.STRENGTH, AttributeTypes.DEXTERITY));
     }
 
     @Override

@@ -6,6 +6,7 @@ import interfaces.Battle;
 import powers.Spell;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,9 +19,13 @@ public abstract class Character extends Entity implements Battle {
     protected Integer charisma;
     protected Integer dexterity;
 
+    protected AttributeTypes mainAttribute;
+    protected List<AttributeTypes> secondaryAttributes;
+
     public Character(ArrayList<Spell> abilities, float currentHP, float maxHP, float currentMana, float maxMana,
                      float normalAttackDamage, boolean fireImmunity, boolean iceImmunity, boolean earthImmunity,
-                     Integer strength, Integer charisma, Integer dexterity, String name, Integer xp, Integer level) {
+                     Integer strength, Integer charisma, Integer dexterity, String name, Integer xp, Integer level,
+                     AttributeTypes mainAttribute, List<AttributeTypes> secondaryAttributes) {
 
         super(abilities, currentHP, maxHP, currentMana, maxMana, normalAttackDamage, fireImmunity, iceImmunity, earthImmunity);
         this.strength = strength;
@@ -29,6 +34,8 @@ public abstract class Character extends Entity implements Battle {
         this.name = name;
         this.xp = xp;
         this.level = level;
+        this.mainAttribute = mainAttribute;
+        this.secondaryAttributes = secondaryAttributes;
     }
 
     protected abstract float getSpellDamageMultiplier(Spell spellCasted);
@@ -84,6 +91,22 @@ public abstract class Character extends Entity implements Battle {
         this.dexterity = dexterity;
     }
 
+    public AttributeTypes getMainAttribute() {
+        return mainAttribute;
+    }
+
+    public List<AttributeTypes> getSecondaryAttributes() {
+        return secondaryAttributes;
+    }
+
+    public Integer getAttributeValue(AttributeTypes attribute) {
+        return switch (attribute) {
+            case STRENGTH -> strength;
+            case CHARISMA -> charisma;
+            case DEXTERITY -> dexterity;
+        };
+    }
+
     @Override
     public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
         Random random = new Random();
@@ -96,7 +119,7 @@ public abstract class Character extends Entity implements Battle {
         } else {
             damage = this.getSpellDamageMultiplier(spellCasted);
         }
-        if (critHit) {
+        if (critHit && getAttributeValue(mainAttribute) >= 50) {
             System.out.println("Given your will to beat your enemy you successfully hit a CRIT hit.");
             return 2 * damage;
         } else {
@@ -109,9 +132,9 @@ public abstract class Character extends Entity implements Battle {
         Random random = new Random();
         double chance = random.nextDouble();
         if (!fromSpell) {
-            if (this.dexterity >= 50) {
+            if (getAttributeValue(secondaryAttributes.get(0)) >= 10 && getAttributeValue(secondaryAttributes.get(1)) >= 30) {
                 if (chance < 0.5) {
-                    System.out.println("Given your extraordinary dexterity you managed to partially dodge a hit and got reduced damage!");
+                    System.out.println("Given your extraordinary skills you managed to partially dodge a hit and got reduced damage!");
                     System.out.println("The enemy dealt " + damage / 2 + " damage to you.");
                     this.setCurrentHP(this.getCurrentHP() - damage / 2);
                     return;

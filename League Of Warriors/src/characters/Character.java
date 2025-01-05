@@ -108,7 +108,7 @@ public abstract class Character extends Entity implements Battle {
     }
 
     @Override
-    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
+    public float getDamage(boolean isNormalAttack, Spell spellCasted) {
         Random random = new Random();
         double chance = random.nextDouble();
         boolean critHit = chance < 0.5;
@@ -175,7 +175,7 @@ public abstract class Character extends Entity implements Battle {
                     scanner.nextLine();
                 }
             }
-            attackDamage = calculateDamage(true, null);
+            attackDamage = getDamage(true, null);
             enemy.receiveDamage(attackDamage, false);
             regenerateMana(random.nextFloat(5.0F, 15.0F));
             Game.showEnemyStats(enemy);
@@ -199,7 +199,7 @@ public abstract class Character extends Entity implements Battle {
                     continue;
                 }
                 if (choice == 1) {
-                    attackDamage = calculateDamage(true, null);
+                    attackDamage = getDamage(true, null);
                     enemy.receiveDamage(attackDamage, false);
                     this.regenerateMana(random.nextFloat(5.0F, 15.0F));
                     Game.showEnemyStats(enemy);
@@ -208,8 +208,8 @@ public abstract class Character extends Entity implements Battle {
                 if (choice > 1 && choice <= this.getAbilities().size() + 1) {
                     Spell spellCasted = this.getAbilities().get(choice - 2);
                     if (this.tryToUseAbility(spellCasted, enemy)) {
-                        attackDamage = calculateDamage(false, spellCasted);
-                        enemy.receiveDamage(attackDamage, true);
+                        attackDamage = getDamage(false, spellCasted);
+                        enemy.accept(spellCasted, attackDamage);
                         this.getAbilities().remove(spellCasted);
                         this.setCurrentMana(this.getCurrentMana() - spellCasted.getManaCost());
                         Game.showEnemyStats(enemy);

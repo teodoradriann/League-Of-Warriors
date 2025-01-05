@@ -54,11 +54,48 @@ public class Account {
         private String country;
         private SortedSet<String> favouriteGames;
 
-        public Information(Credentials loginCredentials, SortedSet<String> favouriteGames, String name, String country) {
-            this.loginCredentials = loginCredentials;
-            this.name = name;
-            this.country = country;
-            this.favouriteGames = favouriteGames;
+        private Information(Builder builder) {
+            this.loginCredentials = builder.loginCredentials;
+            this.name = builder.name;
+            this.country = builder.country;
+            this.favouriteGames = builder.favouriteGames;
+        }
+
+        public static class Builder {
+            private Credentials loginCredentials;
+            private String name;
+            private String country;
+            private SortedSet<String> favouriteGames;
+
+            public Builder setLoginCredentials(Credentials loginCredentials) {
+                this.loginCredentials = loginCredentials;
+                return this;
+            }
+
+            public Builder setName(String name) {
+                this.name = name;
+                return this;
+            }
+
+            public Builder setCountry(String country) {
+                this.country = country;
+                return this;
+            }
+
+            public Builder setFavouriteGames(SortedSet<String> favouriteGames) {
+                this.favouriteGames = favouriteGames;
+                return this;
+            }
+
+            public Information build() {
+                if (loginCredentials == null) {
+                    throw new IllegalStateException("Login credentials must be provided");
+                }
+                if (name == null || name.isEmpty()) {
+                    throw new IllegalStateException("Name must be provided");
+                }
+                return new Information(this);
+            }
         }
     }
 }

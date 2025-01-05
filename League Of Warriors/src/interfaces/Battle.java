@@ -5,6 +5,6 @@ import powers.Spell;
 
 public interface Battle {
     void receiveDamage(float damage, boolean fromSpell);
-    float calculateDamage(boolean isNormalAttack, Spell spell);
+    float getDamage(boolean isNormalAttack, Spell spell);
     void attack(Entity enemy);
 }

@@ -2,11 +2,9 @@ package utils;
 
 import account.Account;
 import account.Credentials;
-import characters.Mage;
-import characters.Rogue;
-import characters.Warrior;
-import characters.Character;
+import characters.*;
 
+import characters.Character;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -70,20 +68,19 @@ public class JsonInput {
                         Integer lvl = Integer.parseInt(level);
                         int experience = ((Number) charJson.get("experience")).intValue();
 
-                        Character newCharacter = null;
-                        if (profession.equals("Warrior"))
-                            newCharacter = new Warrior(cname, experience, lvl);
-                        if (profession.equals("Rogue"))
-                            newCharacter = new Rogue(cname, experience, lvl);
-                        if (profession.equals("Mage"))
-                            newCharacter = new Mage(cname, experience, lvl);
+                        Character newCharacter = CharacterFactory.createCharacter(profession, cname, experience, lvl);
                         characters.add(newCharacter);
                     }
                 } catch (Exception e) {
                     System.out.println("! This account doesn't have characters !");
                 }
 
-                Account.Information information = new Account.Information(credentials, favoriteGames, name, country);
+                Account.Information information = new Account.Information.Builder()
+                        .setLoginCredentials(credentials)
+                        .setName(name)
+                        .setCountry(country)
+                        .setFavouriteGames(favoriteGames)
+                        .build();
                 Account account = new Account(characters, gamesNumber, information);
                 accounts.add(account);
             }

@@ -32,7 +32,7 @@ public class Enemy extends Entity implements Battle {
     }
 
     @Override
-    public float calculateDamage(boolean isNormalAttack, Spell spellCasted) {
+    public float getDamage(boolean isNormalAttack, Spell spellCasted) {
         Random random = new Random();
         double chance = random.nextDouble();
         boolean critHit = chance < 0.5;
@@ -60,9 +60,8 @@ public class Enemy extends Entity implements Battle {
                 int randomIndex = random.nextInt(this.getAbilities().size());
                 Spell spellToCast = this.getAbilities().get(randomIndex);
                 if (this.tryToUseAbility(spellToCast, hero)) {
-                    float attackDamage = calculateDamage(false, spellToCast);
-                    hero.receiveDamage(attackDamage, true);
-                    System.out.println("The enemy used: " + spellToCast);
+                    float attackDamage = getDamage(false, spellToCast);
+                    hero.accept(spellToCast, attackDamage);
                     this.getAbilities().remove(spellToCast);
                     this.setCurrentMana(this.getCurrentMana() - spellToCast.getManaCost());
                     Game.showStats((Character) hero);
@@ -70,7 +69,7 @@ public class Enemy extends Entity implements Battle {
                 }
             }
         }
-        float attackDamage = calculateDamage(true, null);
+        float attackDamage = getDamage(true, null);
         hero.receiveDamage(attackDamage, false);
         this.regenerateMana(random.nextFloat(5.0F, 15.0F));
         Game.showStats((Character) hero);

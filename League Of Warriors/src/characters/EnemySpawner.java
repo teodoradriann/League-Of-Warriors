@@ -1,6 +1,4 @@
 package characters;
-import powers.Earth;
-import powers.Ice;
 import powers.Spell;
 
 import java.util.ArrayList;
@@ -12,10 +10,9 @@ public class EnemySpawner {
     private Random random = new Random();
     // 20 - weak, 30 - normal, 30 - strong, 20 - boss
     private final int[] probabilities = {20, 30, 30, 20};
-    private final int totalProbability = Arrays.stream(probabilities).sum();
 
     public Enemy createEnemy() {
-        int randomValue = random.nextInt(totalProbability);
+        int randomValue = random.nextInt(100);
         EnemyTypes type = getEnemyType(randomValue);
         Enemy enemy = null;
         switch (type) {
@@ -86,7 +83,7 @@ public class EnemySpawner {
         boolean iceImmunity = random.nextBoolean();
         boolean earthImmunity = random.nextBoolean();
         float normalAttackDamage = 5.0F;
-        enemy = new Enemy(abilities, EnemyTypes.WEAK, currentHP, maxHP, currentMana, maxMana, fireImmunity,
+        enemy = new Enemy(abilities, EnemyTypes.BOSS, currentHP, maxHP, currentMana, maxMana, fireImmunity,
                 iceImmunity, earthImmunity, normalAttackDamage);
         return enemy;
     }

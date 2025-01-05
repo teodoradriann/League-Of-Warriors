@@ -1,16 +1,17 @@
 package characters;
 
 import interfaces.Battle;
+import interfaces.Element;
+import interfaces.Visitor;
 import powers.Earth;
 import powers.Fire;
 import powers.Ice;
 import powers.Spell;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
-public abstract class Entity implements Battle {
+public abstract class Entity implements Battle, Element<Entity> {
     private ArrayList<Spell> abilities;
     private float currentHP;
     private float maxHP;
@@ -58,6 +59,11 @@ public abstract class Entity implements Battle {
         } catch (Exception e) {
             throw new RuntimeException("Error while generating spell.");
         }
+    }
+
+    @Override
+    public void accept(Visitor<Entity> visitor, float damage) {
+        visitor.visit(this, damage);
     }
 
     public void regenerateHealth(float hp) {

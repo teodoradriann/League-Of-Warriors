@@ -16,51 +16,62 @@ import exceptions.InvalidCommandException;
 import utils.JsonInput;
 
 public class Game {
+    private static Game instance = null;
+
     private ArrayList<Account> existingAccounts;
     private Grid map;
     private Account loggedAccount;
     private Character hero;
+    public boolean test;
     Scanner scanner = new Scanner(System.in);
 
-    public void init(boolean test) throws InterruptedException {
+    public static Game getInstance(boolean isTest) throws InterruptedException {
+        if (instance == null) {
+            instance = new Game(isTest);
+        }
+        return instance;
+    }
+
+    private Game(boolean isTest) throws InterruptedException {
+        this.test = isTest;
         existingAccounts = JsonInput.deserializeAccounts();
         loginScreen();
         flushScreen();
         try {
-            selectCharacterAndStartGame(test);
+            selectCharacterAndStartGame();
         } catch (InvalidCommandException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void run(boolean test) throws InterruptedException {
+    public void run() throws InterruptedException {
         while (true) {
             String key = scanner.nextLine();
             switch (key.toLowerCase()) {
                 case "w":
                     try {
-                        moveHero("north", test);
+                        moveHero("north");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "s":
                     try {
-                        moveHero("south", true);
+                        moveHero("south");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "a":
                     try {
-                        moveHero("west", true);
+                        moveHero("west");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "d":
                     try {
-                        moveHero("east", true);
+                        moveHero("east");
                     } catch (ImpossibleMove e) {
                         System.out.println(e.getMessage());
                     }
@@ -68,7 +79,7 @@ public class Game {
                 case "q":
                     flushScreen();
                     try {
-                        selectCharacterAndStartGame(test);
+                        selectCharacterAndStartGame();
                     } catch (InvalidCommandException e) {
                         System.out.println(e.getMessage());
                     }
@@ -99,12 +110,12 @@ public class Game {
         }
     }
 
-    private void selectCharacterAndStartGame(boolean test) throws InterruptedException, InvalidCommandException {
+    private void selectCharacterAndStartGame() throws InterruptedException, InvalidCommandException {
         System.out.println("Hello " + this.loggedAccount.getName() + "!");
         System.out.println("Please choose your hero :)");
         System.out.println("COMMANDS: W - north | A - west | S - south | D - east | Q - quit");
         int i = 1;
-        System.out.println("-1: Go back to login screen.");
+        System.out.println("Go back to login menu: -1");
         for (Character character : this.loggedAccount.getOwnedCharacters()) {
             System.out.println(i + ": (" + character.getName() + ") -> type: " + character.getProfession() + ", level: " + character.getLevel() + ", xp: " + character.getXp());
             i++;
@@ -126,8 +137,8 @@ public class Game {
 
             if (choice == -1) {
                 flushScreen();
-                init(test);
-                break;
+                Game.getInstance(this.test);
+                return;
             }
 
             if (choice > 0 && choice <= this.loggedAccount.getOwnedCharacters().size()) {
@@ -137,24 +148,24 @@ public class Game {
                 System.out.println("Please choose a valid character!");
             }
         }
-        startGame(test);
+        startGame();
     }
 
-    private void startGame(boolean test) throws InterruptedException {
+    private void startGame() throws InterruptedException {
         flushScreen();
         Random rand = new Random();
         int length = rand.nextInt(3, 11);
         int height = rand.nextInt(3, 11);
-        if (!test) {
+        if (!this.test) {
             map = Grid.generateMap(length, height, hero);
         } else {
             map = Grid.generateTestGrid(hero);
         }
         map.printMap();
-        run(test);
+        run();
     }
 
-    public void moveHero(String where, boolean test) throws InterruptedException, ImpossibleMove {
+    public void moveHero(String where) throws InterruptedException, ImpossibleMove {
         Cell cellToVisit = getCellToVisit(where);
         Game.flushScreen();
         map.printMap();
@@ -196,12 +207,12 @@ public class Game {
                 visitCell(CellEntityType.PORTAL, cellToVisit, where);
                 System.out.println("CONGRATS! You have found the portal. You're going to the next level.");
                 TimeUnit.SECONDS.sleep(3);
-                startGame(test);
+                startGame();
             }
             case ENEMY -> {
                 EnemySpawner spawner = new EnemySpawner();
                 Enemy enemy;
-                if (!test) {
+                if (!this.test) {
                     enemy = spawner.createEnemy();
                 } else {
                     enemy = spawner.createTestEnemy();
@@ -216,7 +227,7 @@ public class Game {
                     TimeUnit.SECONDS.sleep(3);
                     Game.flushScreen();
                     try {
-                        selectCharacterAndStartGame(test);
+                        selectCharacterAndStartGame();
                     } catch (InvalidCommandException e) {
                         System.out.println(e.getMessage());
                     }
